@@ -4,48 +4,55 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 98%;
-    --card-foreground: 222.2 84% 4.9%;
+    /* ThinkShift Vietnam Theme Colors */
+    --background: 0 0% 100%; /* #FFFFFF */
+    --foreground: 220 20% 14%; /* #222831 - chữ đậm */
+    --card: 0 0% 97.6%; /* #F9F9F9 - xám nhạt */
+    --card-foreground: 220 20% 14%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 84% 4.9%;
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 222.2 84% 4.9%;
-    --muted: 210 40% 96%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 210 40% 96%;
-    --accent-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 220 20% 14%;
+    --primary: 210 83% 20%; /* #0A3D62 - xanh navy */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 97.6%; /* #F9F9F9 */
+    --secondary-foreground: 220 20% 14%;
+    --muted: 0 0% 97.6%;
+    --muted-foreground: 220 10% 46%;
+    --accent: 204 95% 54%; /* #1B9CFC - xanh sáng */
+    --accent-foreground: 0 0% 100%;
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 217.2 91.2% 59.8%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 204 95% 54%; /* #1B9CFC */
     --radius: 0.5rem;
+
+    /* ThinkShift Custom Colors */
+    --navy: 210 83% 20%; /* #0A3D62 */
+    --blue-accent: 204 95% 54%; /* #1B9CFC */
+    --text-dark: 220 20% 14%; /* #222831 */
+    --gray-light: 0 0% 97.6%; /* #F9F9F9 */
   }
 
   .dark {
-    --background: 224 71.4% 4.1%;
-    --foreground: 210 20% 98%;
-    --card: 224 71.4% 6.5%;
-    --card-foreground: 210 20% 98%;
-    --popover: 224 71.4% 4.1%;
-    --popover-foreground: 210 20% 98%;
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 84% 4.9%;
-    --secondary: 215 27.9% 16.9%;
-    --secondary-foreground: 210 20% 98%;
-    --muted: 215 27.9% 16.9%;
-    --muted-foreground: 217.9 10.6% 64.9%;
-    --accent: 215 27.9% 16.9%;
-    --accent-foreground: 210 20% 98%;
+    --background: 220 20% 14%; /* #222831 */
+    --foreground: 0 0% 100%;
+    --card: 210 83% 16%; /* Darker version of navy */
+    --card-foreground: 0 0% 100%;
+    --popover: 220 20% 14%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 204 95% 54%; /* #1B9CFC in dark mode */
+    --primary-foreground: 220 20% 14%;
+    --secondary: 210 83% 20%; /* #0A3D62 */
+    --secondary-foreground: 0 0% 100%;
+    --muted: 210 83% 20%;
+    --muted-foreground: 220 5% 64.9%;
+    --accent: 204 95% 54%; /* #1B9CFC */
+    --accent-foreground: 220 20% 14%;
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 20% 98%;
-    --border: 215 27.9% 16.9%;
-    --input: 215 27.9% 16.9%;
-    --ring: 217.2 91.2% 59.8%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 210 83% 20%;
+    --input: 210 83% 20%;
+    --ring: 204 95% 54%;
   }
 }
 
@@ -73,7 +80,8 @@
   }
 }
 @keyframes pulse-slow {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
     opacity: 1;
   }
@@ -93,16 +101,25 @@
 }
 
 @keyframes flicker {
-  0%, 18%, 22%, 25%, 53%, 57%, 100% {
+  0%,
+  18%,
+  22%,
+  25%,
+  53%,
+  57%,
+  100% {
     opacity: 1;
   }
-  20%, 24%, 55% {
+  20%,
+  24%,
+  55% {
     opacity: 0.6;
   }
 }
 
 @keyframes flash {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {
@@ -111,7 +128,8 @@
 }
 
 @keyframes wiggle-subtle {
-  0%, 100% {
+  0%,
+  100% {
     transform: rotate(0deg);
   }
   25% {
@@ -123,7 +141,8 @@
 }
 
 @keyframes bounce-subtle {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   50% {
@@ -166,7 +185,7 @@
   pointer-events: none;
   width: 100%;
   height: 100%;
-  background-image: 
+  background-image:
     linear-gradient(to right, rgba(120, 120, 120, 0.1) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(120, 120, 120, 0.1) 1px, transparent 1px);
   background-size: 2rem 2rem;
@@ -176,7 +195,7 @@
 
 @media (prefers-color-scheme: dark) {
   .animated-grid {
-    background-image: 
+    background-image:
       linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
       linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
   }
@@ -196,7 +215,11 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: radial-gradient(closest-side, rgba(0, 255, 255, 0.05), transparent 80%);
+  background: radial-gradient(
+    closest-side,
+    rgba(0, 255, 255, 0.05),
+    transparent 80%
+  );
   pointer-events: none;
   mix-blend-mode: overlay;
   animation: pulse-glow 8s ease-in-out infinite alternate;

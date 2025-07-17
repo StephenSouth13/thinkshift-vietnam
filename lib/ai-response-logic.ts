@@ -1,119 +1,215 @@
 // /lib/ai-response-logic.ts
 
-// --- ĐỊNH NGHĨA CÁC Ý ĐỊNH NGƯỜI DÙNG (PHIÊN BẢN MỚI) ---
+// --- ĐỊNH NGHĨA CÁC Ý ĐỊNH NGƯỜI DÙNG (PHIÊN BẢN HƯỚNG NGHIỆP) ---
 type Intent =
-  | 'GREETING'
-  | 'ABOUT_PROJECT_SUMMARY'     // Tóm tắt về dự án
-  | 'ASK_MISSION'             // Hỏi về sứ mệnh & mô hình 3 chân kiềng
-  | 'ASK_PILLAR_1'            // Hỏi sâu về Chân kiềng 1: Tư duy Hệ thống
-  | 'ASK_PILLAR_2'            // Hỏi sâu về Chân kiềng 2: Giao tiếp
-  | 'ASK_PILLAR_3'            // Hỏi sâu về Chân kiềng 3: Tự học
-  | 'ASK_FEATURES'            // Hỏi về các tính năng (đánh giá, báo cáo...)
-  | 'ASK_ROADMAP'             // Hỏi về lộ trình phát triển
-  | 'ASK_TEAM'                // Hỏi về đội ngũ
-  | 'ASK_TECH_STACK'          // Hỏi về công nghệ sử dụng
-  | 'HOW_TO_JOIN'             // Hỏi cách tham gia, đóng góp
-  | 'THANKS'
-  | 'UNKNOWN';
+  | "GREETING"
+  | "ABOUT_THINKSHIFT" // Về ThinkShift Vietnam
+  | "CAREER_GUIDANCE" // Tư vấn nghề nghiệp
+  | "SKILL_ASSESSMENT" // Đánh giá kỹ năng
+  | "LEARNING_PATH" // Lộ trình học tập
+  | "JOB_MARKET" // Thị trường việc làm
+  | "TECH_SKILLS" // Kỹ năng công nghệ
+  | "SOFT_SKILLS" // Kỹ năng mềm
+  | "AI_IMPACT" // Tác động của AI
+  | "MENTORING" // Tìm mentor
+  | "PORTFOLIO" // Xây dựng portfolio
+  | "INTERVIEW_PREP" // Chuẩn bị phỏng vấn
+  | "SALARY_INFO" // Thông tin lương
+  | "COMPANY_INFO" // Thông tin công ty
+  | "STUDY_TIPS" // Mẹo học tập
+  | "THANKS"
+  | "UNKNOWN";
 
-// --- KHO NỘI DUNG PHẢN HỒI (ĐƯỢC NÂNG CẤP TOÀN DIỆN) ---
+// --- KHO NỘI DUNG PHẢN HỒI ---
 const responses: Record<Intent, string[]> = {
   GREETING: [
-    "Xin chào! Tôi là ThinkBot. Sẵn sàng cùng bạn tái định nghĩa năng lực trong Kỷ nguyên Số chưa? 🚀",
-    "Chào bạn! ThinkShift đây. Bạn muốn khám phá cách biến tư duy thành lợi thế cạnh tranh lớn nhất của mình chứ?",
-    "Hello! Tôi là trợ lý AI từ ThinkShift. Hãy hỏi tôi bất cứ điều gì về Mô hình 3 Chân Kiềng hoặc các năng lực cốt lõi của tương lai nhé! 🧠",
+    "Xin chào! Tôi là ThinkShift AI - trợ lý hướng nghiệp của bạn. Tôi có thể giúp bạn định hướng nghề nghiệp, tư vấn kỹ năng và lập lộ trình học tập phù hợp. Bạn cần hỗ trợ gì hôm nay? 🚀",
+    "Chào bạn! Tôi ở đây để hỗ trợ hành trình phát triển sự nghiệp của bạn. Từ việc chọn ngành nghề đến xây dựng kỹ năng, hãy để tôi đồng hành cùng bạn! 💼",
   ],
 
-  ABOUT_PROJECT_SUMMARY: [
-    "ThinkShift Vietnam là một công trình nghiên cứu và phát triển sự nghiệp. Chúng tôi xây dựng một 'la bàn tư duy' để giải quyết nghịch lý giữa giáo dục và thị trường lao động thực chiến. 🎯",
-    "Nói đơn giản, ThinkShift giúp bạn trả lời câu hỏi: 'Trong thời đại AI, năng lực nào mới thực sự là cốt lõi?'. Chúng tôi làm điều đó qua một hệ sinh thái sản phẩm công nghệ.",
+  ABOUT_THINKSHIFT: [
+    "ThinkShift Vietnam là nền tảng hướng nghiệp & co-learning hàng đầu dành cho học sinh, sinh viên và lập trình viên tại Việt Nam. Chúng tôi sử dụng AI để:\n\n🎯 Phân tích năng lực và đề xuất ngành nghề phù hợp\n📚 Tạo lộ trình học tập cá nhân hóa\n🤝 Kết nối với mentor và cộng đồng học tập\n💡 Cung cấp insights về thị trường việc làm\n\nMục tiêu của chúng tôi là giúp bạn tìm thấy và phát triển sự nghiệp mơ ước!",
+    "ThinkShift Vietnam được tạo ra để giải quyết khoảng cách giữa giáo dục và thị trường lao động. Chúng tôi cung cấp đánh giá AI, tư vấn nghề nghiệp, và môi trường học tập cộng đồng để giúp bạn thành công trong thời đại số.",
   ],
 
-  ASK_MISSION: [
-    "Sứ mệnh của ThinkShift là giúp người trẻ xây dựng bộ kỹ năng không bao giờ lỗi thời, dựa trên Mô hình 3 Chân Kiềng: \n1. Tư duy Hệ thống & Sản phẩm 🏛️\n2. Giao tiếp & Dịch chuyển Ngữ cảnh 🌐\n3. Siêu năng lực Tự học & Thích ứng 🚀",
-    "Chúng tôi tin rằng giá trị thật không nằm ở tấm bằng, mà ở cách tư duy. Vì vậy, ThinkShift tập trung vào việc rèn luyện 3 năng lực cốt lõi: Tư duy hệ thống, Giao tiếp chuyển đổi và Khả năng tự học.",
+  CAREER_GUIDANCE: [
+    "Để định hướng nghề nghiệp hiệu quả, tôi khuyên bạn:\n\n1. Làm bài đánh giá năng lực AI của chúng tôi\n2. Khám phá các ngành nghề trending\n3. Phân tích điểm mạnh và sở thích cá nhân\n4. Tìm hiểu mức lương và triển vọng phát triển\n5. Kết nối với mentor trong lĩnh vực quan tâm\n\nBạn đã có ngành nghề cụ thể muốn tìm hiểu chưa?",
+    "Hướng nghiệp thành công cần kết hợp giữa đam mê, năng lực và cơ hội thị trường. Tôi có thể giúp bạn:\n- Đánh giá kỹ năng hiện tại\n- Khám phá các ngành nghề phù hợp\n- Lập kế hoạch phát triển dài hạn\n- Tìm mentor và cơ hội thực tập\n\nBạn muốn bắt đầu từ đâu?",
   ],
 
-  ASK_PILLAR_1: [
-    "🏛️ Tư duy Hệ thống & Sản phẩm là khả năng nhìn thấy 'cả khu rừng chứ không chỉ từng cái cây'. Nó giúp bạn hiểu công việc của mình đóng góp vào đâu trong một bức tranh lớn, từ đó đưa ra quyết định tốt hơn.",
-  ],
-  
-  ASK_PILLAR_2: [
-    "🌐 Giao tiếp & Dịch chuyển Ngữ cảnh là năng lực 'phiên dịch' giữa các thế giới khác nhau: giữa business, tech và người dùng. Đây là kỹ năng kết nối, tạo ra sự đồng thuận và thúc đẩy dự án tiến lên.",
+  SKILL_ASSESSMENT: [
+    "Bài đánh giá kỹ năng AI của ThinkShift sẽ phân tích:\n\n🧠 Tư duy logic và giải quyết vấn đề\n💻 Kỹ năng kỹ thuật (nếu có)\n🗣️ Khả năng giao tiếp và làm việc nhóm\n📈 Tiềm năng học tập và thích ứng\n🎯 Sở thích và định hướng nghề nghiệp\n\nKết quả sẽ được so sánh với cơ sở dữ liệu ngành và đưa ra khuyến nghị cá nhân hóa. Bạn có muốn bắt đầu đánh giá không?",
+    "Đánh giá kỹ năng là bước đầu quan trọng để hiểu bản thân và định hướng phát triển. ThinkShift sử dụng AI để phân tích đa chiều và đưa ra lộ trình học tập phù hợp nhất cho bạn.",
   ],
 
-  ASK_PILLAR_3: [
-    "🚀 Siêu năng lực Tự học & Thích ứng là khả năng 'học cách học'. Trong một thế giới biến đổi liên tục, nó giúp bạn biến việc học thành một hệ thống cá nhân để không ngừng nâng cấp bản thân.",
-  ],
-  
-  ASK_FEATURES: [
-    "ThinkShift có một hệ sinh thái các tính năng độc đáo:\n- Bài đánh giá gamified 🎮: Trải nghiệm tương tác như một ngày làm việc thực tế.\n- Báo cáo năng lực cá nhân hoá 📊: Biểu đồ radar thể hiện điểm mạnh/yếu theo 3 chân kiềng.\n- Dashboard dữ liệu 📈: So sánh góc nhìn của bạn với cộng đồng.\n- Blog Tri thức ✍️: Các phân tích chuyên sâu và case study thực tế.",
+  LEARNING_PATH: [
+    "Lộ trình học tập hiệu quả thường chia thành 3 giai đoạn:\n\n📚 **Giai đoạn 1 (0-6 tháng)**: Nền tảng cơ bản\n🔨 **Giai đoạn 2 (6-18 tháng)**: Kỹ năng chuyên sâu\n🚀 **Giai đoạn 3 (18+ tháng)**: Kinh nghiệm thực chiến\n\nMỗi giai đoạn sẽ có mục tiêu, tài liệu học tập và dự án thực hành cụ thể. Bạn muốn xem lộ trình cho ngành nào?",
+    "Lộ trình học tập cá nhân hóa dựa trên:\n- Kỹ năng hiện tại của bạn\n- Mục tiêu nghề nghiệp\n- Thời gian có thể đầu tư\n- Phong cách học tập ưa thích\n\nChúng tôi sẽ gợi ý khóa học, dự án và mentor phù hợp cho từng giai đoạn.",
   ],
 
-  ASK_ROADMAP: [
-    "Lộ trình của ThinkShift có 3 giai đoạn rõ ràng:\n- GĐ 1: Ra mắt nền tảng đánh giá và blog.\n- GĐ 2: Xây dựng cộng đồng và các sự kiện chia sẻ.\n- GĐ 3: Phát triển nền tảng kết nối Mentor-Mentee và các mini-courses chuyên sâu. 🗺️",
+  JOB_MARKET: [
+    "Thị trường việc làm IT Việt Nam đang rất sôi động:\n\n📈 **Nhu cầu cao**: Full-stack Developer, AI/ML Engineer, DevOps\n💰 **Mức lương hấp dẫn**: 15-40 triệu cho Mid-level\n🌍 **Xu hướng**: Remote work, outsourcing quốc tế\n🔥 **Kỹ năng hot**: React, Python, Cloud, AI\n\nBạn muốn tìm hiểu chi tiết về ngành nào?",
+    "Dựa trên data từ các trang tuyển dụng lớn, tôi có thể cung cấp thông tin về:\n- Mức lương theo vị trí và kinh nghiệm\n- Kỹ năng được yêu cầu nhiều nhất\n- Các công ty đang tuyển\n- Xu hướng phát triển ngành\n\nBạn quan tâm đến thông tin nào?",
   ],
 
-  ASK_TEAM: [
-    "Dự án được đồng sáng lập bởi:\n- Quách Thành Long (Tech & System Architect): Người kiến tạo nền tảng công nghệ, kết hợp tư duy Kỹ thuật và Kinh doanh.\n- Trịnh Nam Thuận (Data & Research Lead): Người chịu trách nhiệm về phân tích dữ liệu và thiết kế khảo sát.",
+  TECH_SKILLS: [
+    "Các kỹ năng công nghệ quan trọng hiện tại:\n\n🔥 **Frontend**: React, Vue.js, TypeScript\n⚙️ **Backend**: Node.js, Python, Go\n🗄️ **Database**: PostgreSQL, MongoDB\n☁️ **Cloud**: AWS, GCP, Docker\n🤖 **AI/ML**: Python, TensorFlow, PyTorch\n📱 **Mobile**: React Native, Flutter\n\nBạn muốn học kỹ năng nào trước?",
+    "Để chọn kỹ năng công nghệ phù hợp:\n1. Xem xét mục tiêu nghề nghiệp\n2. Phân tích nhu cầu thị trường\n3. Đánh giá thời gian học tập\n4. Tìm mentor và cộng đồng hỗ trợ\n\nTôi có thể tư vấn lộ trình học cụ thể cho từng kỹ năng.",
   ],
 
-  ASK_TECH_STACK: [
-    "Chúng tôi tự hào xây dựng ThinkShift trên một nền tảng công nghệ hiện đại:\n- Framework: Next.js 14\n- Backend/DB: Supabase\n- UI: Tailwind CSS & ShadCN UI\n- Animation: Framer Motion\nBạn có muốn biết thêm chi tiết nào không? 🤓",
+  SOFT_SKILLS: [
+    "Kỹ năng mềm quan trọng trong thời đại AI:\n\n🗣️ **Giao tiếp**: Trình bày ý tưởng rõ ràng\n🤝 **Làm việc nhóm**: Collaboration và leadership\n🧠 **Tư duy phản biện**: Phân tích và giải quyết vấn đề\n📚 **Học tập liên tục**: Adaptability và growth mindset\n🎯 **Quản lý dự án**: Planning và execution\n\nĐây là những kỹ năng AI khó thay thế. Bạn muốn phát triển kỹ năng nào?",
+    "Soft skills ngày càng quan trọng vì:\n- AI có thể làm các task kỹ thuật\n- Con người cần tập trung vào sáng tạo và giao tiếp\n- Làm việc remote cần kỹ năng tự quản lý\n- Collaboration cross-functional team\n\nTôi có thể gợi ý cách phát triển từng kỹ năng cụ thể.",
   ],
 
-  HOW_TO_JOIN: [
-    "Tuyệt vời! Cách tốt nhất để tham gia hiện tại là trải nghiệm Bài đánh giá năng lực của chúng tôi. Mỗi đóng góp của bạn đều giúp ThinkShift hiểu rõ hơn về thế hệ trẻ Việt Nam. 💪",
-    "Chúng tôi luôn chào đón những cộng sự chung tầm nhìn. Bạn có thể kết nối và trao đổi ý tưởng với đội ngũ qua email: `stephensouth1307@gmail.com` 📧.",
+  AI_IMPACT: [
+    "AI đang thay đổi thị trường lao động:\n\n🚀 **Cơ hội mới**: AI Engineer, Prompt Engineer, AI Product Manager\n⚠️ **Nghề bị ảnh hưởng**: Data entry, basic coding, customer service\n🔄 **Nghề chuyển đổi**: Developer → AI-assisted Developer\n💡 **Kỹ năng cần thiết**: Tư duy sáng tạo, giải quyết vấn đề phức tạp\n\nKey: Học cách làm việc WITH AI, không against AI!",
+    "Để thành công trong thời đại AI:\n- Tập trung vào kỹ năng AI khó thay thế\n- Học cách sử dụng AI tools hiệu quả\n- Phát triển tư duy sáng tạo và strategic thinking\n- Xây dựng network và personal brand\n\nBạn muốn biết AI ảnh hưởng như thế nào đến ngành cụ thể?",
+  ],
+
+  MENTORING: [
+    "Mentor có thể giúp bạn:\n\n🎯 **Career guidance**: Định hướng nghề nghiệp\n📚 **Skill development**: Phát triển kỹ năng\n🔍 **Code review**: Feedback chất lượng cao\n🌐 **Network**: Kết nối cơ hội\n💼 **Interview prep**: Chuẩn bị phỏng vấn\n\nThinkShift có network mentor từ Google, Microsoft, Grab... Bạn cần mentor cho lĩnh vực nào?",
+    "Cách tìm mentor hiệu quả:\n1. Xác định mục tiêu cụ thể\n2. Research background của mentor\n3. Chuẩn bị câu hỏi thoughtful\n4. Respect thời gian của mentor\n5. Follow up và show progress\n\nTôi có thể gợi ý mentor phù hợp với goals của bạn!",
+  ],
+
+  PORTFOLIO: [
+    "Portfolio mạnh cần có:\n\n🎨 **Design**: Clean, professional, responsive\n💻 **Projects**: 3-5 dự án đa dạng\n📝 **Case study**: Process, challenges, solutions\n🔗 **Live demos**: Deploy và accessible\n📱 **Contact**: Easy to reach you\n\nMỗi project nên show different skills và có real impact. Bạn đang làm trong lĩnh vực gì?",
+    "Tips xây dựng portfolio nổi bật:\n- Chọn projects align với target job\n- Document your thinking process\n- Include metrics và results\n- Get feedback từ professionals\n- Update thường xuyên\n\nTôi có thể review và suggest improvements cho portfolio của bạn!",
+  ],
+
+  INTERVIEW_PREP: [
+    "Chuẩn bị phỏng vấn hiệu quả:\n\n📚 **Research**: Company, role, interviewer\n💼 **STAR method**: Situation, Task, Action, Result\n💻 **Technical prep**: Coding challenges, system design\n🗣️ **Behavioral**: Câu chuyện về experience\n❓ **Questions**: Chuẩn bị câu hỏi thông minh\n\nLoại phỏng vấn nào bạn cần prepare: technical hay behavioral?",
+    "Common interview formats:\n- Phone/video screening\n- Technical coding test\n- System design (senior roles)\n- Behavioral interview\n- Final round với leadership\n\nMỗi round cần strategy khác nhau. Tôi có thể giúp bạn practice specific scenarios!",
+  ],
+
+  SALARY_INFO: [
+    "Mức lương IT tại Việt Nam (2024):\n\n👨‍💻 **Junior (0-2 năm)**: 8-15 triệu\n🧑‍💻 **Middle (2-5 năm)**: 15-30 triệu\n👨‍💼 **Senior (5+ năm)**: 30-60 triệu\n🏢 **Lead/Manager**: 50-100 triệu\n\nLưu ý: Lương phụ thuộc vào skill, company size, location. Remote có thể x2-3 lần. Bạn muốn biết mức lương cho vị trí cụ thể?",
+    "Factors ảnh hưởng lương:\n- Technical skills và experience\n- Company type (startup vs corporate)\n- Location (HCM > HN > other cities)\n- English proficiency\n- Negotiation skills\n\nTôi có thể tư vấn strategy để tăng lương hiệu quả!",
+  ],
+
+  COMPANY_INFO: [
+    "Top tech companies tại VN:\n\n🌟 **Global**: Google, Microsoft, Amazon\n🦄 **Regional**: Grab, Shopee, Lazada\n🇻🇳 **Local**: VNG, FPT, Tiki, VinTech\n🏢 **Outsourcing**: TMA, Axon, KMS\n🚀 **Startups**: Tiki, Momo, VNPay\n\nMỗi loại có culture và career path khác nhau. Bạn prefer môi trường nào?",
+    "Cách research company:\n- Glassdoor reviews\n- LinkedIn employee insights\n- Tech blogs và case studies\n- Salary ranges\n- Growth trajectory\n\nTôi có thể share insights về specific companies bạn quan tâm!",
+  ],
+
+  STUDY_TIPS: [
+    "Study tips hiệu quả:\n\n⏰ **Pomodoro**: 25 phút focus + 5 phút break\n🎯 **Active learning**: Practice > reading\n👥 **Study groups**: Explain to others\n📱 **Spaced repetition**: Review theo chu kỳ\n🎮 **Gamification**: Set goals và rewards\n\nMost important: Consistency > intensity. Bạn đang học skill nào?",
+    "Learning strategies:\n- Build projects while learning\n- Join communities (Discord, Reddit)\n- Follow industry experts\n- Attend meetups và conferences\n- Teach others what you learn\n\nActive engagement accelerates learning significantly!",
   ],
 
   THANKS: [
-    "Rất vui được giúp bạn! Nếu có bất cứ câu hỏi nào về năng lực lõi, đừng ngần ngại hỏi nhé. 😊",
-    "Không có chi! Nhiệm vụ của tôi là giúp bạn hiểu rõ hơn về la bàn tư duy của ThinkShift. 🚀",
+    "Rất vui được hỗ trợ bạn! Nếu có thêm câu hỏi về career, skills hay opportunities, đừng ngần ngại hỏi nhé. Chúc bạn thành công! 🚀",
+    "Không có gì! Tôi luôn sẵn sàng đồng hành cùng hành trình phát triển sự nghiệp của bạn. Keep learning và growing! 💪",
   ],
 
   UNKNOWN: [
-    "Câu hỏi này khá thú vị! Tôi sẽ ghi nhận lại để học hỏi thêm. Hiện tại, bạn có muốn tìm hiểu về Mô hình 3 Chân Kiềng hay các tính năng của ThinkShift không?",
-    "Hmm, có vẻ như câu hỏi này ngoài phạm vi kiến thức hiện tại của tôi. Bạn có thể hỏi về lộ trình phát triển hoặc công nghệ mà dự án đang sử dụng không? 🤔",
+    "Câu hỏi thú vị! Tôi có thể không hiểu rõ ý bạn, nhưng tôi có thể giúp bạn:\n- Định hướng nghề nghiệp\n- Tư vấn kỹ năng\n- Lộ trình học tập\n- Thông tin thị trường việc làm\n- Kết nối mentor\n\nBạn muốn hỏi về chủ đề nào?",
+    "Xin lỗi, tôi chưa hiểu câu hỏi của bạn. Có thể bạn hỏi lại theo cách khác? Hoặc tôi có thể hỗ trợ bạn các vấn đề về career development, skill building, hoặc job market insights! 🤔",
   ],
 };
 
-// --- BỘ TỪ KHÓA ĐỂ PHÂN LOẠI Ý ĐỊNH (CẬP NHẬT) ---
+// --- BỘ TỪ KHÓA ĐỂ PHÂN LOẠI Ý ĐỊNH ---
 const intentKeywords: Record<Intent, string[]> = {
-  GREETING: ['chào', 'hello', 'hi', 'xin chào', 'yo'],
-  ABOUT_PROJECT_SUMMARY: ['thinkshift', 'dự án', 'về cái gì', 'giới thiệu'],
-  ASK_MISSION: ['sứ mệnh', 'mục tiêu', 'giải quyết', 'mô hình', '3 chân kiềng', 'ba chân kiềng'],
-  ASK_PILLAR_1: ['tư duy hệ thống', 'tư duy sản phẩm', 'chân kiềng 1', 'cột 1'],
-  ASK_PILLAR_2: ['giao tiếp', 'dịch chuyển ngữ cảnh', 'chân kiềng 2', 'cột 2'],
-  ASK_PILLAR_3: ['tự học', 'thích ứng', 'siêu năng lực', 'chân kiềng 3', 'cột 3'],
-  ASK_FEATURES: ['tính năng', 'có gì', 'đánh giá', 'báo cáo', 'dashboard', 'blog'],
-  ASK_ROADMAP: ['lộ trình', 'kế hoạch', 'tương lai', 'roadmap'],
-  ASK_TEAM: ['đội ngũ', 'ai làm', 'founder', 'sáng lập', 'thành long', 'nam thuận'],
-  ASK_TECH_STACK: ['công nghệ', 'tech stack', 'ngôn ngữ', 'framework', 'nextjs', 'supabase'],
-  HOW_TO_JOIN: ['tham gia', 'đóng góp', 'hợp tác', 'liên hệ', 'làm sao để'],
-  THANKS: ['cảm ơn', 'thanks', 'thank you', 'tuyệt vời', 'hay quá'],
+  GREETING: ["chào", "hello", "hi", "xin chào", "yo", "hey"],
+  ABOUT_THINKSHIFT: [
+    "thinkshift",
+    "dự án",
+    "nền tảng",
+    "về gì",
+    "giới thiệu",
+    "là gì",
+  ],
+  CAREER_GUIDANCE: [
+    "nghề nghiệp",
+    "hướng nghiệp",
+    "career",
+    "job",
+    "định hướng",
+    "chọn ngành",
+  ],
+  SKILL_ASSESSMENT: [
+    "đánh giá",
+    "assessment",
+    "test",
+    "quiz",
+    "kiểm tra",
+    "năng lực",
+  ],
+  LEARNING_PATH: ["lộ trình", "roadmap", "học", "học gì", "bắt đầu", "plan"],
+  JOB_MARKET: [
+    "thị trường",
+    "tuyển dụng",
+    "việc làm",
+    "cơ hội",
+    "nhu cầu",
+    "trending",
+  ],
+  TECH_SKILLS: [
+    "kỹ năng",
+    "công nghệ",
+    "lập trình",
+    "coding",
+    "programming",
+    "tech",
+  ],
+  SOFT_SKILLS: [
+    "soft skill",
+    "kỹ năng mềm",
+    "giao tiếp",
+    "teamwork",
+    "leadership",
+  ],
+  AI_IMPACT: [
+    "ai",
+    "artificial intelligence",
+    "tác động",
+    "thay thế",
+    "automation",
+  ],
+  MENTORING: ["mentor", "hướng dẫn", "tư vấn", "coach", "guidance"],
+  PORTFOLIO: ["portfolio", "dự án", "project", "showcase", "cv", "resume"],
+  INTERVIEW_PREP: ["phỏng vấn", "interview", "chuẩn bị", "prep", "tips"],
+  SALARY_INFO: ["lương", "salary", "thu nhập", "income", "tiền", "pay"],
+  COMPANY_INFO: ["công ty", "company", "doanh nghiệp", "firm", "startup"],
+  STUDY_TIPS: ["học tập", "study", "tips", "mẹo", "hiệu quả", "method"],
+  THANKS: ["cảm ơn", "thanks", "thank you", "tuyệt vời", "hay"],
   UNKNOWN: [],
 };
 
-// --- GỢI Ý CÂU HỎI TIẾP THEO (CHIẾN LƯỢC HƠN) ---
+// --- GỢI Ý CÂU HỎI TIẾP THEO ---
 const followUpSuggestions: Partial<Record<Intent, string[]>> = {
-  GREETING: ["Bạn có thể hỏi: 'Sứ mệnh của ThinkShift là gì?'"],
-  ABOUT_PROJECT_SUMMARY: ["Bạn có muốn tìm hiểu về 'Mô hình 3 Chân Kiềng' không?"],
-  ASK_MISSION: ["Bạn muốn tìm hiểu sâu hơn về chân kiềng 'Tư duy Hệ thống' chứ?"],
-  ASK_PILLAR_1: ["Bạn có muốn biết về tính năng 'Bài đánh giá gamified' không?"],
-  ASK_FEATURES: ["Bạn có muốn biết 'Lộ trình phát triển' của dự án?"],
-  ASK_ROADMAP: ["Bạn có muốn hỏi về 'cách tham gia' dự án không?"],
+  GREETING: ["Bạn có thể hỏi: 'Tôi nên học gì để trở thành developer?'"],
+  ABOUT_THINKSHIFT: ["Bạn muốn làm bài đánh giá kỹ năng không?"],
+  CAREER_GUIDANCE: ["Bạn có muốn tìm hiểu về lộ trình học cụ thể?"],
+  SKILL_ASSESSMENT: ["Bạn có muốn bắt đầu bài đánh giá ngay không?"],
+  LEARNING_PATH: ["Bạn có muốn xem thông tin về mentor?"],
+  JOB_MARKET: ["Bạn có muốn biết mức lương cho vị trí cụ thể?"],
+  TECH_SKILLS: ["Bạn có muốn lộ trình học skill này không?"],
+  MENTORING: ["Bạn có muốn tôi gợi ý mentor phù hợp?"],
 };
 
-// --- HÀM LOGIC TRUNG TÂM (TỐI ƯU THỨ TỰ ƯU TIÊN) ---
+// --- HÀM LOGIC TRUNG TÂM ---
 function getIntent(message: string): Intent {
   const lowerMessage = message.toLowerCase();
-  
-  // Ưu tiên các intent cụ thể, chi tiết trước
+
+  // Ưu tiên các intent cụ thể trước
   const intentPriority: Intent[] = [
-    'ASK_PILLAR_1', 'ASK_PILLAR_2', 'ASK_PILLAR_3', 'ASK_MISSION',
-    'ASK_TECH_STACK', 'ASK_FEATURES', 'ASK_ROADMAP', 'ASK_TEAM', 'HOW_TO_JOIN',
-    'ABOUT_PROJECT_SUMMARY', 'GREETING', 'THANKS'
+    "SKILL_ASSESSMENT",
+    "CAREER_GUIDANCE",
+    "LEARNING_PATH",
+    "MENTORING",
+    "JOB_MARKET",
+    "TECH_SKILLS",
+    "SOFT_SKILLS",
+    "AI_IMPACT",
+    "PORTFOLIO",
+    "INTERVIEW_PREP",
+    "SALARY_INFO",
+    "COMPANY_INFO",
+    "STUDY_TIPS",
+    "ABOUT_THINKSHIFT",
+    "GREETING",
+    "THANKS",
   ];
 
   for (const intent of intentPriority) {
@@ -123,21 +219,22 @@ function getIntent(message: string): Intent {
     }
   }
 
-  return 'UNKNOWN';
+  return "UNKNOWN";
 }
 
 // --- HÀM TRẢ VỀ PHẢN HỒI HOÀN CHỈNH ---
 export function getAIResponse(userMessage: string): string {
   const intent = getIntent(userMessage);
   const possibleResponses = responses[intent];
-  let reply = possibleResponses[Math.floor(Math.random() * possibleResponses.length)];
+  let reply =
+    possibleResponses[Math.floor(Math.random() * possibleResponses.length)];
 
   // Gợi ý thêm nếu có
   const suggestions = followUpSuggestions[intent];
   if (suggestions && suggestions.length > 0) {
-    const suggestion = suggestions[Math.floor(Math.random() * suggestions.length)];
-    // Thêm một dòng mới để gợi ý trông rõ ràng hơn
-    reply += `\n\n*👉 Thử hỏi tiếp: "${suggestion}"`;
+    const suggestion =
+      suggestions[Math.floor(Math.random() * suggestions.length)];
+    reply += `\n\n💡 *${suggestion}*`;
   }
 
   return reply;

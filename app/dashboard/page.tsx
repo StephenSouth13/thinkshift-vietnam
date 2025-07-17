@@ -1,226 +1,609 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Progress } from "@/components/ui/progress"
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Brain,
-  MessageCircle,
-  BookOpen,
-  TrendingUp,
   Target,
-  Lightbulb,
+  TrendingUp,
+  BookOpen,
+  Users,
+  Award,
   Download,
-  Share2,
-  ArrowRight,
-} from "lucide-react"
-import Link from "next/link"
+  BarChart3,
+  MapPin,
+  Calendar,
+  Star,
+  ChevronRight,
+  Lightbulb,
+  ArrowUpRight,
+} from "lucide-react";
+import Link from "next/link";
+import { motion } from "framer-motion";
+
+// Mock data for user dashboard
+const userData = {
+  name: "Nguyễn Văn An",
+  email: "an.nguyen@email.com",
+  assessmentScore: 85,
+  completedAssessments: 3,
+  skillLevel: "Trung cấp",
+  targetCareer: "Full-stack Developer",
+  learningProgress: 68,
+  studyStreak: 14,
+  badges: ["Tư duy logic", "Học tập tích cực", "Khám phá công nghệ"],
+};
+
+const careerRecommendations = [
+  {
+    title: "Full-stack Developer",
+    match: 92,
+    description:
+      "Phù hợp với tư duy logic và khả năng giải quyết vấn đề của bạn",
+    skills: ["React", "Node.js", "Database", "API Development"],
+    averageSalary: "15-30 triệu VNĐ",
+    jobOpportunities: "Cao",
+    icon: "💻",
+  },
+  {
+    title: "Data Analyst",
+    match: 78,
+    description:
+      "Khả năng phân tích và tư duy hệ thống phù hợp với lĩnh vực này",
+    skills: ["Python", "SQL", "Excel", "Data Visualization"],
+    averageSalary: "12-25 triệu VNĐ",
+    jobOpportunities: "Trung bình",
+    icon: "📊",
+  },
+  {
+    title: "Product Manager",
+    match: 71,
+    description: "Kỹ năng giao tiếp và tư duy sản phẩm phù hợp",
+    skills: [
+      "Product Strategy",
+      "User Research",
+      "Project Management",
+      "Communication",
+    ],
+    averageSalary: "20-40 triệu VNĐ",
+    jobOpportunities: "Cao",
+    icon: "🎯",
+  },
+];
+
+const skillGaps = [
+  { skill: "React.js", currentLevel: 60, targetLevel: 85, priority: "Cao" },
+  {
+    skill: "Database Design",
+    currentLevel: 40,
+    targetLevel: 75,
+    priority: "Cao",
+  },
+  {
+    skill: "System Design",
+    currentLevel: 30,
+    targetLevel: 70,
+    priority: "Trung bình",
+  },
+  { skill: "DevOps", currentLevel: 20, targetLevel: 60, priority: "Thấp" },
+];
+
+const learningRoadmap = [
+  {
+    phase: "Giai đoạn 1 (0-6 tháng)",
+    title: "Nền tảng cơ bản",
+    tasks: [
+      "Hoàn thiện JavaScript ES6+",
+      "Học React.js cơ bản đến nâng cao",
+      "Làm quen với Git/GitHub",
+      "Xây dựng 3-5 dự án nhỏ",
+    ],
+    status: "in-progress",
+  },
+  {
+    phase: "Giai đoạn 2 (6-12 tháng)",
+    title: "Backend & Database",
+    tasks: [
+      "Học Node.js và Express.js",
+      "Thiết kế và quản lý Database",
+      "REST API Development",
+      "Xây dựng 2-3 dự án full-stack",
+    ],
+    status: "pending",
+  },
+  {
+    phase: "Giai đoạn 3 (12-24 tháng)",
+    title: "Chuyên sâu & Thực chiến",
+    tasks: [
+      "System Design principles",
+      "Cloud platforms (AWS/GCP)",
+      "DevOps cơ bản",
+      "Tham gia dự án thực tế/internship",
+    ],
+    status: "pending",
+  },
+];
+
+const recentActivities = [
+  {
+    action: "Hoàn thành đánh giá",
+    detail: "Kỹ năng lập trình",
+    time: "2 giờ trước",
+    icon: Target,
+  },
+  {
+    action: "Học bài mới",
+    detail: "React Hooks Advanced",
+    time: "5 giờ trước",
+    icon: BookOpen,
+  },
+  {
+    action: "Tham gia thảo luận",
+    detail: "Community: Frontend Tips",
+    time: "1 ngày trước",
+    icon: Users,
+  },
+  {
+    action: "Đạt thành tích",
+    detail: "Hoàn thành 30 ngày liên tiếp",
+    time: "2 ngày trước",
+    icon: Award,
+  },
+];
 
 export default function DashboardPage() {
-  // Mock data - trong thực tế sẽ lấy từ localStorage hoặc API
-  const userScores = {
-    systemThinking: 12,
-    communication: 15,
-    learning: 9,
-  }
-
-  const maxScore = 18 // 6 câu hỏi x 3 điểm tối đa
-
-  const getScorePercentage = (score: number) => (score / maxScore) * 100
-  const getScoreLevel = (score: number) => {
-    const percentage = getScorePercentage(score)
-    if (percentage >= 80) return { level: "Xuất sắc", color: "text-green-600", bg: "bg-green-100" }
-    if (percentage >= 60) return { level: "Tốt", color: "text-blue-600", bg: "bg-blue-100" }
-    if (percentage >= 40) return { level: "Trung bình", color: "text-yellow-600", bg: "bg-yellow-100" }
-    return { level: "Cần cải thiện", color: "text-red-600", bg: "bg-red-100" }
-  }
-
-  const recommendations = [
-    {
-      skill: "Tư duy Hệ thống",
-      score: userScores.systemThinking,
-      icon: Brain,
-      color: "blue",
-      recommendations: [
-        "Thực hành phân tích root cause khi gặp vấn đề",
-        "Học về System Design và Architecture patterns",
-        "Đọc sách 'Thinking in Systems' của Donella Meadows",
-      ],
-    },
-    {
-      skill: "Giao tiếp",
-      score: userScores.communication,
-      icon: MessageCircle,
-      color: "green",
-      recommendations: [
-        "Tham gia các buổi thuyết trình kỹ thuật",
-        "Luyện tập giải thích concept phức tạp bằng ngôn ngữ đơn giản",
-        "Tham gia mentoring junior developers",
-      ],
-    },
-    {
-      skill: "Tự học",
-      score: userScores.learning,
-      icon: BookOpen,
-      color: "purple",
-      recommendations: [
-        "Xây dựng thói quen học 30 phút mỗi ngày",
-        "Tham gia các online course về công nghệ mới",
-        "Thực hành learning by teaching - chia sẻ kiến thức",
-      ],
-    },
-  ]
-
   return (
-    <div className="pt-16 min-h-screen bg-gradient-to-br from-background via-primary/5 to-background">
-      <div className="container mx-auto px-4 py-12">
+    <div className="min-h-screen bg-background pt-24 pb-16">
+      <div className="container mx-auto px-4">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-12"
-        >
-          <h1 className="font-bold tracking-tighter text-4xl md:text-5xl mb-6">
-            Báo cáo Năng lực
-            <br />
-            <span className="text-primary">Cá nhân của Bạn</span>
-          </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Dựa trên các lựa chọn trong tình huống thực tế, đây là phân tích chi tiết về 3 chân kiềng năng lực của bạn.
-          </p>
-        </motion.div>
-
-        {/* Overall Score */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="mb-12"
+          className="mb-8"
         >
-          <Card className="bg-gradient-to-r from-primary/10 to-primary/5">
-            <CardContent className="p-8">
-              <div className="grid md:grid-cols-4 gap-6 items-center">
-                <div className="md:col-span-1 text-center">
-                  <div className="w-24 h-24 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
-                    <TrendingUp className="h-12 w-12 text-white" />
-                  </div>
-                  <h3 className="font-semibold text-lg">Tổng điểm</h3>
-                  <p className="text-3xl font-bold text-primary">
-                    {userScores.systemThinking + userScores.communication + userScores.learning}/{maxScore * 3}
+          <h1 className="text-4xl font-bold text-foreground mb-2">
+            Chào mừng trở lại, {userData.name}! 👋
+          </h1>
+          <p className="text-muted-foreground text-lg">
+            Tiếp tục hành trình phát triển sự nghiệp của bạn với AI
+          </p>
+        </motion.div>
+
+        {/* Quick Stats */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8"
+        >
+          <Card className="bg-gradient-to-br from-blue-accent/10 to-blue-accent/5 border-blue-accent/20">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">
+                    Điểm đánh giá
+                  </p>
+                  <p className="text-3xl font-bold text-blue-accent">
+                    {userData.assessmentScore}/100
                   </p>
                 </div>
-                <div className="md:col-span-3 space-y-4">
-                  {recommendations.map((item, index) => (
-                    <div key={index} className="flex items-center gap-4">
-                      <div className={`w-10 h-10 bg-${item.color}-100 rounded-full flex items-center justify-center`}>
-                        <item.icon className={`h-5 w-5 text-${item.color}-600`} />
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="font-medium">{item.skill}</span>
-                          <span className="text-sm text-muted-foreground">
-                            {item.score}/{maxScore}
-                          </span>
-                        </div>
-                        <Progress value={getScorePercentage(item.score)} className="h-2" />
-                      </div>
-                      <Badge className={getScoreLevel(item.score).bg + " " + getScoreLevel(item.score).color}>
-                        {getScoreLevel(item.score).level}
-                      </Badge>
-                    </div>
-                  ))}
+                <Brain className="h-8 w-8 text-blue-accent" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-to-br from-navy/10 to-navy/5 border-navy/20">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">
+                    Tiến độ học
+                  </p>
+                  <p className="text-3xl font-bold text-navy">
+                    {userData.learningProgress}%
+                  </p>
                 </div>
+                <TrendingUp className="h-8 w-8 text-navy" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">
+                    Chuỗi học
+                  </p>
+                  <p className="text-3xl font-bold text-foreground">
+                    {userData.studyStreak} ngày
+                  </p>
+                </div>
+                <Calendar className="h-8 w-8 text-muted-foreground" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">
+                    Badges
+                  </p>
+                  <p className="text-3xl font-bold text-foreground">
+                    {userData.badges.length}
+                  </p>
+                </div>
+                <Award className="h-8 w-8 text-muted-foreground" />
               </div>
             </CardContent>
           </Card>
         </motion.div>
 
-        {/* Detailed Analysis */}
-        <div className="grid lg:grid-cols-3 gap-8 mb-12">
-          {recommendations.map((item, index) => (
+        {/* Main Content */}
+        <Tabs defaultValue="career" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="career">Nghề nghiệp</TabsTrigger>
+            <TabsTrigger value="skills">Kỹ năng</TabsTrigger>
+            <TabsTrigger value="roadmap">Lộ trình</TabsTrigger>
+            <TabsTrigger value="activity">Hoạt động</TabsTrigger>
+          </TabsList>
+
+          {/* Career Recommendations Tab */}
+          <TabsContent value="career" className="space-y-6">
             <motion.div
-              key={index}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 + index * 0.1 }}
+              transition={{ delay: 0.2 }}
             >
-              <Card className="h-full">
+              <Card>
                 <CardHeader>
-                  <div className="flex items-center gap-3">
-                    <div className={`w-12 h-12 bg-${item.color}-100 rounded-full flex items-center justify-center`}>
-                      <item.icon className={`h-6 w-6 text-${item.color}-600`} />
-                    </div>
-                    <div>
-                      <CardTitle className="text-xl">{item.skill}</CardTitle>
-                      <p className="text-sm text-muted-foreground">
-                        {item.score}/{maxScore} điểm • {getScoreLevel(item.score).level}
-                      </p>
-                    </div>
-                  </div>
+                  <CardTitle className="flex items-center gap-2">
+                    <Target className="h-5 w-5 text-blue-accent" />
+                    Nghề nghiệp phù hợp với bạn
+                  </CardTitle>
+                  <CardDescription>
+                    Dựa trên kết quả đánh giá AI và phân tích năng lực của bạn
+                  </CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <div className="mb-4">
-                    <Progress value={getScorePercentage(item.score)} className="h-3" />
-                  </div>
+                <CardContent className="space-y-6">
+                  {careerRecommendations.map((career, index) => (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.1 * index }}
+                      className="border rounded-lg p-6 hover:shadow-md transition-shadow"
+                    >
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex items-center gap-3">
+                          <span className="text-2xl">{career.icon}</span>
+                          <div>
+                            <h3 className="text-xl font-semibold text-foreground">
+                              {career.title}
+                            </h3>
+                            <p className="text-muted-foreground">
+                              {career.description}
+                            </p>
+                          </div>
+                        </div>
+                        <Badge
+                          variant={career.match >= 80 ? "default" : "secondary"}
+                          className="text-lg px-3 py-1"
+                        >
+                          {career.match}% phù hợp
+                        </Badge>
+                      </div>
 
-                  <h4 className="font-semibold mb-3 flex items-center gap-2">
-                    <Lightbulb className="h-4 w-4 text-yellow-500" />
-                    Gợi ý cải thiện
-                  </h4>
-                  <ul className="space-y-2">
-                    {item.recommendations.map((rec, recIndex) => (
-                      <li key={recIndex} className="text-sm text-muted-foreground flex items-start gap-2">
-                        <Target className="h-3 w-3 text-primary mt-1 flex-shrink-0" />
-                        {rec}
-                      </li>
-                    ))}
-                  </ul>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <div>
+                          <p className="text-sm font-medium text-muted-foreground mb-2">
+                            Kỹ năng cần:
+                          </p>
+                          <div className="flex flex-wrap gap-1">
+                            {career.skills.map((skill, i) => (
+                              <Badge
+                                key={i}
+                                variant="outline"
+                                className="text-xs"
+                              >
+                                {skill}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-muted-foreground mb-2">
+                            Mức lương:
+                          </p>
+                          <p className="text-sm font-semibold text-green-600">
+                            {career.averageSalary}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-muted-foreground mb-2">
+                            Cơ hội việc làm:
+                          </p>
+                          <Badge
+                            variant={
+                              career.jobOpportunities === "Cao"
+                                ? "default"
+                                : "secondary"
+                            }
+                          >
+                            {career.jobOpportunities}
+                          </Badge>
+                        </div>
+                      </div>
+
+                      <Button variant="outline" size="sm" className="w-full">
+                        Xem chi tiết và lộ trình học{" "}
+                        <ChevronRight className="ml-2 h-4 w-4" />
+                      </Button>
+                    </motion.div>
+                  ))}
                 </CardContent>
               </Card>
             </motion.div>
-          ))}
-        </div>
+          </TabsContent>
+
+          {/* Skills Gap Tab */}
+          <TabsContent value="skills" className="space-y-6">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <BarChart3 className="h-5 w-5 text-blue-accent" />
+                    Kỹ năng cần phát triển
+                  </CardTitle>
+                  <CardDescription>
+                    Phân tích khoảng cách kỹ năng để đạt mục tiêu nghề nghiệp
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {skillGaps.map((skill, index) => (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.1 * index }}
+                      className="space-y-3"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <h4 className="font-medium text-foreground">
+                            {skill.skill}
+                          </h4>
+                          <Badge
+                            variant={
+                              skill.priority === "Cao"
+                                ? "destructive"
+                                : skill.priority === "Trung bình"
+                                  ? "default"
+                                  : "secondary"
+                            }
+                          >
+                            {skill.priority}
+                          </Badge>
+                        </div>
+                        <span className="text-sm text-muted-foreground">
+                          {skill.currentLevel}% → {skill.targetLevel}%
+                        </span>
+                      </div>
+                      <div className="space-y-2">
+                        <Progress value={skill.currentLevel} className="h-2" />
+                        <div className="flex justify-between text-xs text-muted-foreground">
+                          <span>Hiện tại: {skill.currentLevel}%</span>
+                          <span>Mục tiêu: {skill.targetLevel}%</span>
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button size="sm" variant="outline">
+                          <BookOpen className="mr-2 h-4 w-4" />
+                          Tài liệu học
+                        </Button>
+                        <Button size="sm" variant="outline">
+                          <Users className="mr-2 h-4 w-4" />
+                          Tìm mentor
+                        </Button>
+                      </div>
+                    </motion.div>
+                  ))}
+                </CardContent>
+              </Card>
+            </motion.div>
+          </TabsContent>
+
+          {/* Learning Roadmap Tab */}
+          <TabsContent value="roadmap" className="space-y-6">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <MapPin className="h-5 w-5 text-blue-accent" />
+                    Lộ trình học tập cá nhân
+                  </CardTitle>
+                  <CardDescription>
+                    Kế hoạch chi tiết để đạt mục tiêu {userData.targetCareer}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {learningRoadmap.map((phase, index) => (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.1 * index }}
+                      className={`border rounded-lg p-6 ${
+                        phase.status === "in-progress"
+                          ? "border-blue-accent/50 bg-blue-accent/5"
+                          : "border-border"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-4">
+                        <div>
+                          <h3 className="text-lg font-semibold text-foreground">
+                            {phase.title}
+                          </h3>
+                          <p className="text-muted-foreground">{phase.phase}</p>
+                        </div>
+                        <Badge
+                          variant={
+                            phase.status === "in-progress"
+                              ? "default"
+                              : "secondary"
+                          }
+                        >
+                          {phase.status === "in-progress"
+                            ? "Đang học"
+                            : "Sắp tới"}
+                        </Badge>
+                      </div>
+
+                      <ul className="space-y-2">
+                        {phase.tasks.map((task, i) => (
+                          <li
+                            key={i}
+                            className="flex items-center gap-2 text-sm"
+                          >
+                            <div
+                              className={`w-2 h-2 rounded-full ${
+                                phase.status === "in-progress"
+                                  ? "bg-blue-accent"
+                                  : "bg-muted-foreground"
+                              }`}
+                            />
+                            {task}
+                          </li>
+                        ))}
+                      </ul>
+
+                      {phase.status === "in-progress" && (
+                        <div className="mt-4 pt-4 border-t border-border">
+                          <Button size="sm" className="mr-2">
+                            Tiếp tục học
+                          </Button>
+                          <Button size="sm" variant="outline">
+                            Xem tiến độ
+                          </Button>
+                        </div>
+                      )}
+                    </motion.div>
+                  ))}
+                </CardContent>
+              </Card>
+            </motion.div>
+          </TabsContent>
+
+          {/* Activity Tab */}
+          <TabsContent value="activity" className="space-y-6">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="grid grid-cols-1 lg:grid-cols-2 gap-6"
+            >
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Star className="h-5 w-5 text-blue-accent" />
+                    Hoạt động gần đây
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {recentActivities.map((activity, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center gap-3 p-3 rounded-lg hover:bg-muted/50 transition-colors"
+                    >
+                      <div className="p-2 rounded-full bg-blue-accent/10">
+                        <activity.icon className="h-4 w-4 text-blue-accent" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-medium text-sm">{activity.action}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {activity.detail}
+                        </p>
+                      </div>
+                      <span className="text-xs text-muted-foreground">
+                        {activity.time}
+                      </span>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Award className="h-5 w-5 text-blue-accent" />
+                    Badges đã đạt được
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 gap-3">
+                    {userData.badges.map((badge, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center gap-3 p-3 rounded-lg bg-muted/30"
+                      >
+                        <div className="w-8 h-8 rounded-full bg-blue-accent/10 flex items-center justify-center">
+                          <Award className="h-4 w-4 text-blue-accent" />
+                        </div>
+                        <span className="font-medium text-sm">{badge}</span>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          </TabsContent>
+        </Tabs>
 
         {/* Action Buttons */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.8 }}
-          className="text-center space-y-4"
+          transition={{ delay: 0.3 }}
+          className="mt-8 flex flex-col sm:flex-row gap-4"
         >
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="flex items-center gap-2">
-              <Download className="h-4 w-4" />
-              Tải báo cáo PDF
-            </Button>
-            <Button size="lg" variant="outline" className="flex items-center gap-2 bg-transparent">
-              <Share2 className="h-4 w-4" />
-              Chia sẻ kết quả
-            </Button>
-          </div>
-
-          <div className="pt-8">
-            <Card className="bg-gradient-to-r from-primary/5 to-primary/10">
-              <CardContent className="p-8 text-center">
-                <h3 className="font-semibold text-xl mb-4">Muốn phát triển thêm?</h3>
-                <p className="text-muted-foreground mb-6">
-                  Khám phá các bài viết chuyên sâu và lộ trình phát triển cá nhân được thiết kế riêng cho profile năng
-                  lực của bạn.
-                </p>
-                <Button asChild size="lg">
-                  <Link href="/blog">
-                    Khám phá Blog
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Link>
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
+          <Button size="lg" className="flex-1" asChild>
+            <Link href="/assessment">
+              <Lightbulb className="mr-2 h-5 w-5" />
+              Làm đánh giá mới
+            </Link>
+          </Button>
+          <Button size="lg" variant="outline" className="flex-1">
+            <Download className="mr-2 h-5 w-5" />
+            Xuất báo cáo PDF
+          </Button>
+          <Button size="lg" variant="outline" className="flex-1" asChild>
+            <Link href="/co-learning">
+              <Users className="mr-2 h-5 w-5" />
+              Tham gia Co-Learning
+              <ArrowUpRight className="ml-2 h-4 w-4" />
+            </Link>
+          </Button>
         </motion.div>
       </div>
     </div>
-  )
+  );
 }

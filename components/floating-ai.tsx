@@ -19,8 +19,8 @@ export default function FloatingAI() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     createMessage(
-      "Xin chào 👋! Tôi là Thinking Bot – trợ lý tư duy từ ThinkShift Vietnam. Bạn muốn khám phá điều gì hôm nay? 🎓",
-      false
+      "Xin chào 👋! Tôi là ThinkShift AI – trợ lý hướng nghiệp thông minh của ThinkShift Vietnam. Tôi có thể giúp bạn:\n\n🎯 Tư vấn định hướng nghề nghiệp\n📚 Gợi ý lộ trình học tập\n💡 Giải đáp thắc mắc về kỹ năng\n🤝 Kết nối với mentor phù hợp\n\nBạn cần hỗ trợ gì hôm nay?",
+      false,
     ),
   ]);
   const [input, setInput] = useState("");
@@ -50,16 +50,16 @@ export default function FloatingAI() {
   return (
     <>
       {/* Floating button */}
-      
-<button
-  onClick={() => setOpen(!open)}
-  className="fixed bottom-5 right-5 z-50 p-4 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-600 text-white shadow-xl hover:scale-110 hover:shadow-2xl transition-all duration-300 animate-fade-in cursor-pointer group"
->
-  <Bot
-    size={28}
-    className="transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110 drop-shadow-[0_0_6px_rgba(255,255,255,0.5)]"
-  />
-</button>
+
+      <button
+        onClick={() => setOpen(!open)}
+        className="fixed bottom-5 right-5 z-50 p-4 rounded-full bg-gradient-to-tr from-navy to-blue-accent text-white shadow-xl hover:scale-110 hover:shadow-2xl transition-all duration-300 animate-fade-in cursor-pointer group"
+      >
+        <Bot
+          size={28}
+          className="transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110 drop-shadow-[0_0_6px_rgba(255,255,255,0.5)]"
+        />
+      </button>
 
       {/* Chat Box */}
       <AnimatePresence>
@@ -71,8 +71,8 @@ export default function FloatingAI() {
             transition={{ type: "spring", stiffness: 300, damping: 25 }}
             className="fixed bottom-20 right-4 w-[90vw] sm:w-[400px] max-h-[80vh] flex flex-col shadow-2xl border rounded-2xl bg-background z-50"
           >
-            <div className="bg-[#0f172a] text-white px-4 py-3 rounded-t-2xl text-sm font-medium flex items-center gap-2">
-              <Bot size={18} /> ThinkBot – Trợ lý học thuật ✨
+            <div className="bg-gradient-to-r from-navy to-blue-accent text-white px-4 py-3 rounded-t-2xl text-sm font-medium flex items-center gap-2">
+              <Bot size={18} /> ThinkShift AI – Trợ lý hướng nghiệp ✨
             </div>
 
             <ScrollArea className="h-[400px] p-4 space-y-4">
@@ -91,8 +91,8 @@ export default function FloatingAI() {
                     <div
                       className={`max-w-[80%] px-4 py-2 rounded-xl text-sm whitespace-pre-line shadow-sm ${
                         msg.isUser
-                          ? "bg-blue-500 text-white rounded-br-none"
-                          : "bg-muted text-foreground rounded-bl-none"
+                          ? "bg-blue-accent text-white rounded-br-none"
+                          : "bg-muted text-foreground rounded-bl-none border border-border"
                       }`}
                     >
                       {msg.content}
@@ -105,7 +105,7 @@ export default function FloatingAI() {
 
             <div className="p-3 border-t flex gap-2 items-center">
               <Input
-                placeholder="Hỏi gì cũng được, đừng ngại..."
+                placeholder="Ví dụ: Tôi nên học gì để trở thành developer?"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSubmit()}

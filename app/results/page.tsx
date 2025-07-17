@@ -1,767 +1,753 @@
-// app/results/page.tsx
+"use client";
 
-"use client"
-
-import { useState } from "react"
-import Link from "next/link"
-import { motion, Variants, easeOut, easeInOut } from "framer-motion" // Import easeInOut
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip,
-  ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis,
-  PolarRadiusAxis, Radar, LineChart, Line, PieChart, Pie, Cell,
-} from "recharts"
-import { ArrowRight, Users, TrendingUp, Award, Brain, AlertTriangle, Target, Lightbulb, Info, Zap } from "lucide-react" // Thêm Zap icon
-
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
+  Brain,
+  Target,
+  TrendingUp,
+  BarChart3,
+  PieChart,
+  Download,
+  Share2,
+  BookOpen,
+  Users,
+  Lightbulb,
+  Award,
+  AlertTriangle,
+  CheckCircle,
+  ArrowUp,
+  ArrowDown,
+  Minus,
+  Star,
+  MapPin,
+  Calendar,
+  DollarSign,
+  Briefcase,
+  Clock,
+} from "lucide-react";
+import Link from "next/link";
+import { motion } from "framer-motion";
+import { PDFExport } from "@/components/pdf-export";
 
-// =====================================================================================
-// <<<<< DỮ LIỆU & KIỂU DỮ LIỆU CỐ ĐỊNH >>>>>
-// =====================================================================================
-
-// Định nghĩa kiểu dữ liệu
-interface SkillGapDataItem {
-  skill: string;
-  students: number;
-  employers: number;
-  gap: number;
-}
-interface ExperienceLevelDataItem {
-  level: string;
-  systemThinking: number;
-  communication: number;
-  learning: number;
-  count: number;
-}
-interface IndustryComparisonDataItem {
-  industry: string;
-  systemThinking: number;
-  communication: number;
-  learning: number;
-}
-interface RoleDistributionDataItem {
-  role: string;
-  value: number;
-  color: string;
-}
-interface TrendDataItem {
-  month: string;
-  systemThinking: number;
-  communication: number;
-  learning: number;
-}
-interface StatisticItem {
-  title: string;
-  value: string;
-  icon: React.ElementType;
-  change: string;
-  description: string;
-  source?: string;
-}
-
-// Dữ liệu tĩnh cho các biểu đồ
-const skillGapData: SkillGapDataItem[] = [
-  { skill: "Tư duy Phản biện", students: 6.2, employers: 8.5, gap: 2.3 },
-  { skill: "Giải quyết Vấn đề", students: 5.8, employers: 8.8, gap: 3.0 },
-  { skill: "Học hỏi Thích ứng", students: 7.1, employers: 8.2, gap: 1.1 },
-  { skill: "Giao tiếp Hiệu quả", students: 6.5, employers: 8.3, gap: 1.8 },
-  { skill: "Làm việc Nhóm", students: 7.3, employers: 8.0, gap: 0.7 },
-  { skill: "Kỹ năng Kỹ thuật", students: 7.8, employers: 6.5, gap: -1.3 },
-  { skill: "Kiến thức Chuyên môn", students: 8.2, employers: 6.8, gap: -1.4 },
-];
-const experienceLevelData: ExperienceLevelDataItem[] = [
-  { level: "Fresher (0-1 năm)", systemThinking: 4.2, communication: 5.1, learning: 6.8, count: 847 },
-  { level: "Junior (1-3 năm)", systemThinking: 5.8, communication: 6.4, learning: 7.2, count: 1203 },
-  { level: "Mid (3-5 năm)", systemThinking: 7.1, communication: 7.6, learning: 7.8, count: 623 },
-  { level: "Senior (5+ năm)", systemThinking: 8.5, communication: 8.2, learning: 8.1, count: 174 },
-];
-const industryComparisonData: IndustryComparisonDataItem[] = [
-  { industry: "Fintech", systemThinking: 7.8, communication: 7.2, learning: 8.1 },
-  { industry: "E-commerce", systemThinking: 6.9, communication: 8.0, learning: 7.5 },
-  { industry: "Healthcare Tech", systemThinking: 8.2, communication: 7.8, learning: 7.9 },
-  { industry: "EdTech", systemThinking: 7.5, communication: 8.3, learning: 8.4 },
-  { industry: "Gaming", systemThinking: 7.1, communication: 6.8, learning: 8.0 },
-  { industry: "Enterprise Software", systemThinking: 8.0, communication: 7.5, learning: 7.6 },
-];
-const roleDistributionData: RoleDistributionDataItem[] = [
-  { role: "Frontend Developer", value: 32, color: "#2563eb" }, // Blue
-  { role: "Backend Developer", value: 28, color: "#059669" }, // Green
-  { role: "Full-stack Developer", value: 25, color: "#7c3aed" }, // Purple
-  { role: "DevOps Engineer", value: 8, color: "#d97706" }, // Orange
-  { role: "Mobile Developer", value: 7, color: "#dc2626" }, // Red
-];
-const trendData: TrendDataItem[] = [
-  { month: "T1/2024", systemThinking: 6.2, communication: 6.8, learning: 7.1 },
-  { month: "T2/2024", systemThinking: 6.4, communication: 6.9, learning: 7.2 },
-  { month: "T3/2024", systemThinking: 6.6, communication: 7.1, learning: 7.4 },
-  { month: "T4/2024", systemThinking: 6.8, communication: 7.3, learning: 7.6 },
-  { month: "T5/2024", systemThinking: 7.0, communication: 7.5, learning: 7.8 },
-  { month: "T6/2024", systemThinking: 7.2, communication: 7.7, learning: 8.0 },
-];
-const statisticsData: StatisticItem[] = [
-  { title: "Người tham gia", value: "2,847", icon: Users, change: "+23%", description: "Tăng trưởng trong tháng qua dựa trên số lượng tài khoản đăng ký và hoàn thành bài đánh giá.", source: "https://data.thinkshift.vn/participants-growth-q2-2024" },
-  { title: "Điểm trung bình", value: "6.8/10", icon: Award, change: "+0.3", description: "Cải thiện so với quý trước, phản ánh nỗ lực phát triển kỹ năng của cộng đồng.", source: "https://data.thinkshift.vn/average-score-q2-2024" },
-  { title: "Tỷ lệ hoàn thành", value: "89%", icon: TrendingUp, change: "+5%", description: "Tỷ lệ người dùng hoàn thành toàn bộ bài kiểm tra năng lực, cho thấy mức độ tương tác cao.", source: "https://data.thinkshift.vn/completion-rate-q2-2024" },
-];
-
-// Animated variants for Framer Motion with refined ease
-const cardVariants: Variants = {
-  hidden: { opacity: 0, y: 30, scale: 0.98 },
-  visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.7, ease: easeOut, delay: 0.1 } },
+// Mock AI Analysis Results
+const analysisResults = {
+  user: {
+    name: "Nguyễn Văn An",
+    completedAt: "2024-01-15T10:30:00Z",
+    assessmentId: "ASS-2024-001",
+    totalScore: 85,
+  },
+  careerRecommendations: [
+    {
+      title: "Full-stack Developer",
+      matchPercentage: 92,
+      description:
+        "Khả năng lập trình và tư duy logic xuất sắc, phù hợp với phát triển ứng dụng web toàn diện",
+      pros: [
+        "Tư duy logic tốt",
+        "Khả năng học nhanh",
+        "Thích thử nghiệm công nghệ mới",
+      ],
+      cons: [
+        "Cần cải thiện kỹ năng giao tiếp",
+        "Thiếu kinh nghiệm làm việc nhóm",
+      ],
+      averageSalary: "15-30 triệu VNĐ",
+      jobDemand: "Rất cao",
+      growth: "22%",
+      icon: "💻",
+      color: "#1B9CFC",
+    },
+    {
+      title: "Data Scientist",
+      matchPercentage: 78,
+      description:
+        "Khả năng phân tích và xử lý dữ liệu, phù hợp với xu hướng AI",
+      pros: ["Tư duy phân tích", "Yêu thích toán học", "Quan tâm đến AI"],
+      cons: ["Cần học thêm thống kê", "Thiếu kinh nghiệm với big data"],
+      averageSalary: "18-35 triệu VNĐ",
+      jobDemand: "Cao",
+      growth: "35%",
+      icon: "📊",
+      color: "#0A3D62",
+    },
+    {
+      title: "UI/UX Designer",
+      matchPercentage: 65,
+      description: "Có khiếu thẩm mỹ và quan tâm đến trải nghiệm người dùng",
+      pros: ["Có khiếu nghệ thuật", "Tư duy người dùng", "Chú ý đến chi tiết"],
+      cons: ["Cần học thêm design tools", "Thiếu portfolio"],
+      averageSalary: "12-25 triệu VNĐ",
+      jobDemand: "Trung bình",
+      growth: "18%",
+      icon: "🎨",
+      color: "#8e44ad",
+    },
+  ],
+  skillAnalysis: {
+    technical: [
+      { skill: "Programming Logic", score: 85, benchmark: 70, trend: "up" },
+      { skill: "Problem Solving", score: 90, benchmark: 75, trend: "up" },
+      { skill: "System Thinking", score: 75, benchmark: 65, trend: "stable" },
+      { skill: "Database Concepts", score: 60, benchmark: 70, trend: "down" },
+      { skill: "Web Technologies", score: 80, benchmark: 75, trend: "up" },
+    ],
+    soft: [
+      { skill: "Communication", score: 70, benchmark: 80, trend: "stable" },
+      { skill: "Teamwork", score: 65, benchmark: 75, trend: "down" },
+      { skill: "Leadership", score: 55, benchmark: 60, trend: "stable" },
+      { skill: "Time Management", score: 85, benchmark: 70, trend: "up" },
+      { skill: "Learning Agility", score: 95, benchmark: 80, trend: "up" },
+    ],
+  },
+  personalityInsights: {
+    traits: [
+      {
+        trait: "Analytical Thinking",
+        score: 90,
+        description:
+          "Xuất sắc trong việc phân tích và giải quyết vấn đề phức tạp",
+      },
+      {
+        trait: "Creativity",
+        score: 75,
+        description: "Có khả năng tư duy sáng tạo và đưa ra giải pháp mới",
+      },
+      {
+        trait: "Persistence",
+        score: 85,
+        description: "Kiên trì và không bỏ cuộc khi gặp khó khăn",
+      },
+      {
+        trait: "Collaboration",
+        score: 60,
+        description: "Cần cải thiện kỹ năng làm việc nhóm",
+      },
+      {
+        trait: "Adaptability",
+        score: 80,
+        description: "Thích ứng tốt với thay đổi và môi trường mới",
+      },
+    ],
+  },
+  learningPath: {
+    immediate: [
+      "Hoàn thiện JavaScript ES6+ và React.js",
+      "Học Node.js và Express framework",
+      "Thực hành với Git và GitHub",
+      "Xây dựng portfolio với 3-5 dự án",
+    ],
+    shortTerm: [
+      "Học thiết kế database và SQL",
+      "Tìm hiểu về RESTful API",
+      "Tham gia các dự án mã nguồn mở",
+      "Cải thiện kỹ năng giao tiếp",
+    ],
+    longTerm: [
+      "Học System Design",
+      "Tìm hiểu về Cloud Computing",
+      "Phát triển kỹ năng leadership",
+      "Xây dựng personal brand",
+    ],
+  },
 };
-const headerVariants: Variants = {
-  hidden: { opacity: 0, y: -40 },
-  visible: { opacity: 1, y: 0, transition: { duration: 1.0, ease: easeOut } },
-};
-const sectionVariants: Variants = {
-  hidden: { opacity: 0, y: 50 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: easeOut, staggerChildren: 0.15 } },
-};
-const textRevealVariants: Variants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: easeOut } },
-};
 
-
-// Custom Tooltip cho Recharts với phong cách theme hiện đại
-const CustomRechartsTooltip = ({ active, payload, label }: any) => {
-  if (active && payload && payload.length) {
-    return (
-      <div className="custom-tooltip bg-white/95 backdrop-blur-sm p-4 border border-gray-200 rounded-lg shadow-xl text-sm font-medium animate-fade-in">
-        <p className="label font-bold text-gray-800 mb-1">{label}</p>
-        {payload.map((entry: any, index: number) => (
-          <p key={`item-${index}`} className="flex items-center gap-2 mt-0.5" style={{ color: entry.color || entry.stroke }}>
-            <span className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color || entry.stroke }}></span>
-            {`${entry.name}: `}
-            <span className="font-semibold">{`${entry.value.toFixed(1)}${entry.unit || ''}`}</span>
-          </p>
-        ))}
-      </div>
-    );
-  }
-  return null;
-};
-
-// =====================================================================================
-// <<<<< COMPONENT CHÍNH CỦA TRANG >>>>>
-// =====================================================================================
 export default function ResultsPage() {
-  const [roleFilter, setRoleFilter] = useState("all");
-  const [experienceFilter, setExperienceFilter] = useState("all");
-  const [fieldFilter, setFieldFilter] = useState("all");
+  const [activeTab, setActiveTab] = useState("overview");
 
-  const filteredIndustryComparisonData =
-    fieldFilter === "all"
-      ? industryComparisonData
-      : industryComparisonData.filter((d) => d.industry.toLowerCase().replace(/\s/g, '').includes(fieldFilter));
-  
-  const Bold = ({ children }: { children: React.ReactNode }) => <strong className="font-bold text-gray-900">{children}</strong>;
+  const getTrendIcon = (trend: string) => {
+    switch (trend) {
+      case "up":
+        return <ArrowUp className="h-4 w-4 text-green-500" />;
+      case "down":
+        return <ArrowDown className="h-4 w-4 text-red-500" />;
+      default:
+        return <Minus className="h-4 w-4 text-gray-500" />;
+    }
+  };
+
+  const getScoreColor = (score: number, benchmark: number) => {
+    if (score >= benchmark + 10) return "text-green-600";
+    if (score <= benchmark - 10) return "text-red-600";
+    return "text-yellow-600";
+  };
 
   return (
-    <div className="pt-16 bg-gradient-to-br from-indigo-50 to-purple-50 min-h-screen text-gray-800">
-      <div className="container mx-auto px-4 py-16 md:py-20">
+    <div className="min-h-screen bg-background pt-24 pb-16">
+      <div className="container mx-auto px-4">
         {/* Header */}
         <motion.div
-          variants={headerVariants}
-          initial="hidden"
-          animate="visible"
-          className="text-center mb-16"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-8"
         >
-          <h1 className="font-extrabold tracking-tighter text-4xl md:text-5xl lg:text-7xl mb-6 leading-tight drop-shadow-md">
-            Bức Tranh Toàn Cảnh:
-            <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 block mt-3">
-              Năng Lực Nhân Sự Công Nghệ Việt Nam
-            </span>
-          </h1>
-          <motion.p 
-            variants={textRevealVariants}
-            transition={{delay: 0.8}}
-            className="text-lg md:text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed"
-          >
-            Dựa trên phân tích sâu rộng từ <Bold>2,847 chuyên gia công nghệ</Bold> trên toàn quốc, Thinkshift mang đến cái nhìn đột phá về <Bold>khoảng cách kỹ năng, xu hướng phát triển</Bold> và <Bold>phân bố vai trò</Bold> trong ngành. Mọi số liệu đều được thu thập và trình bày với tính học thuật cao, đảm bảo tính minh bạch và chuẩn xác.
-          </motion.p>
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+            <div>
+              <h1 className="text-4xl font-bold text-foreground mb-2">
+                Kết quả Đánh giá AI 🎯
+              </h1>
+              <p className="text-muted-foreground text-lg">
+                Phân tích chi tiết về năng lực và định hướng nghề nghiệp của bạn
+              </p>
+              <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
+                <span>
+                  Hoàn thành:{" "}
+                  {new Date(analysisResults.user.completedAt).toLocaleString(
+                    "vi-VN",
+                  )}
+                </span>
+                <Badge variant="outline">
+                  ID: {analysisResults.user.assessmentId}
+                </Badge>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Button variant="outline" size="lg">
+                <Share2 className="mr-2 h-5 w-5" />
+                Chia sẻ
+              </Button>
+              <Button size="lg">
+                <Download className="mr-2 h-5 w-5" />
+                Xuất PDF
+              </Button>
+            </div>
+          </div>
         </motion.div>
 
-        {/* --- */}
-        {/* Key Statistics */}
+        {/* Overall Score */}
         <motion.div
-          variants={sectionVariants}
-          initial="hidden"
-          animate="visible"
-          className="grid md:grid-cols-3 gap-8 mb-16"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="mb-8"
         >
-          {statisticsData.map((stat, index) => (
-            <motion.div variants={cardVariants} key={index}>
-              <Card className="relative overflow-hidden group border border-gray-200 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-semibold text-gray-500 mb-1">{stat.title}</p>
-                      <p className="text-4xl font-extrabold mt-1 text-gray-900">{stat.value}</p>
-                      <div className="flex items-center mt-3">
-                        <Badge variant="secondary" className="text-green-700 bg-green-100 px-3 py-1 text-sm rounded-full animate-bounce-subtle">
-                          {stat.change}
-                        </Badge>
-                        <span className="text-xs text-gray-500 ml-3">{stat.description}</span>
-                      </div>
+          <Card className="bg-gradient-to-br from-blue-accent/10 to-blue-accent/5 border-blue-accent/20">
+            <CardContent className="p-8">
+              <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
+                <div className="text-center lg:text-left">
+                  <h2 className="text-2xl font-bold text-foreground mb-2">
+                    Điểm tổng thể
+                  </h2>
+                  <p className="text-muted-foreground">
+                    Dựa trên phân tích toàn diện các kỹ năng và đặc điểm cá nhân
+                  </p>
+                </div>
+                <div className="flex items-center gap-8">
+                  <div className="text-center">
+                    <div className="text-6xl font-bold text-blue-accent mb-2">
+                      {analysisResults.user.totalScore}
                     </div>
-                    <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center shadow-md group-hover:scale-110 transition-transform duration-500">
-                      <stat.icon className="h-9 w-9 text-blue-600 group-hover:animate-pulse" />
+                    <div className="text-sm text-muted-foreground">
+                      / 100 điểm
                     </div>
                   </div>
-                  {stat.source && (
-                    <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Info className="h-5 w-5 text-gray-400 hover:text-gray-600 cursor-pointer" />
-                          </TooltipTrigger>
-                          <TooltipContent className="bg-white p-3 border border-gray-200 rounded-lg shadow-xl text-xs max-w-xs z-50">
-                            <p className="font-semibold text-gray-700 mb-1">Nguồn dữ liệu đáng tin cậy:</p>
-                            <Link href={stat.source} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline break-all">
-                              {stat.source}
-                            </Link>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
+                  <div className="text-center">
+                    <Badge variant="default" className="text-lg px-4 py-2 mb-2">
+                      Xuất sắc
+                    </Badge>
+                    <p className="text-sm text-muted-foreground">Xếp hạng</p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* Main Content Tabs */}
+        <Tabs
+          value={activeTab}
+          onValueChange={setActiveTab}
+          className="space-y-6"
+        >
+          <TabsList className="grid w-full grid-cols-5">
+            <TabsTrigger value="overview">Tổng quan</TabsTrigger>
+            <TabsTrigger value="career">Nghề nghiệp</TabsTrigger>
+            <TabsTrigger value="skills">Kỹ năng</TabsTrigger>
+            <TabsTrigger value="roadmap">Lộ trình</TabsTrigger>
+            <TabsTrigger value="export">Xuất PDF</TabsTrigger>
+          </TabsList>
+
+          {/* Overview Tab */}
+          <TabsContent value="overview" className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Key Insights */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Lightbulb className="h-5 w-5 text-blue-accent" />
+                    Insights quan trọng
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="p-4 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
+                    <div className="flex items-center gap-2 mb-2">
+                      <CheckCircle className="h-5 w-5 text-green-600" />
+                      <span className="font-semibold text-green-800 dark:text-green-200">
+                        Điểm mạnh nổi bật
+                      </span>
                     </div>
+                    <p className="text-sm text-green-700 dark:text-green-300">
+                      Khả năng học hỏi và tư duy logic của bạn xuất sắc (95% và
+                      90%). Đây là nền tảng vững chắc cho nghề lập trình.
+                    </p>
+                  </div>
+
+                  <div className="p-4 rounded-lg bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800">
+                    <div className="flex items-center gap-2 mb-2">
+                      <AlertTriangle className="h-5 w-5 text-orange-600" />
+                      <span className="font-semibold text-orange-800 dark:text-orange-200">
+                        Cần cải thiện
+                      </span>
+                    </div>
+                    <p className="text-sm text-orange-700 dark:text-orange-300">
+                      Kỹ năng giao tiếp và làm việc nhóm cần được phát triển để
+                      tối đa hóa tiềm năng nghề nghiệp.
+                    </p>
+                  </div>
+
+                  <div className="p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Target className="h-5 w-5 text-blue-600" />
+                      <span className="font-semibold text-blue-800 dark:text-blue-200">
+                        Khuyến nghị
+                      </span>
+                    </div>
+                    <p className="text-sm text-blue-700 dark:text-blue-300">
+                      Tập trung vào Full-stack Development với 92% độ phù hợp.
+                      Thị trường có nhu cầu cao và mức lương hấp dẫn.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Skills Distribution */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <PieChart className="h-5 w-5 text-blue-accent" />
+                    Điểm kỹ năng trung bình
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium">
+                        Kỹ năng Kỹ thuật
+                      </span>
+                      <span className="text-sm font-bold text-blue-accent">
+                        78%
+                      </span>
+                    </div>
+                    <Progress value={78} className="h-2" />
+                  </div>
+
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium">Kỹ năng Mềm</span>
+                      <span className="text-sm font-bold text-navy">74%</span>
+                    </div>
+                    <Progress value={74} className="h-2" />
+                  </div>
+
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium">
+                        Kiến thức Chuyên môn
+                      </span>
+                      <span className="text-sm font-bold text-purple-600">
+                        65%
+                      </span>
+                    </div>
+                    <Progress value={65} className="h-2" />
+                  </div>
+
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium">Kinh nghiệm</span>
+                      <span className="text-sm font-bold text-red-600">
+                        45%
+                      </span>
+                    </div>
+                    <Progress value={45} className="h-2" />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          {/* Career Recommendations Tab */}
+          <TabsContent value="career" className="space-y-6">
+            <div className="space-y-6">
+              {analysisResults.careerRecommendations.map((career, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.1 * index }}
+                >
+                  <Card className="overflow-hidden">
+                    <CardHeader className="bg-gradient-to-r from-gray-light to-transparent dark:from-navy/10 dark:to-transparent">
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-center gap-4">
+                          <div className="text-4xl">{career.icon}</div>
+                          <div>
+                            <CardTitle className="text-2xl">
+                              {career.title}
+                            </CardTitle>
+                            <CardDescription className="text-base mt-1">
+                              {career.description}
+                            </CardDescription>
+                          </div>
+                        </div>
+                        <Badge
+                          variant={
+                            career.matchPercentage >= 80
+                              ? "default"
+                              : "secondary"
+                          }
+                          className="text-xl px-4 py-2"
+                        >
+                          {career.matchPercentage}%
+                        </Badge>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="p-6 space-y-6">
+                      {/* Market Info */}
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="flex items-center gap-3 p-4 rounded-lg bg-muted/30">
+                          <DollarSign className="h-8 w-8 text-green-600" />
+                          <div>
+                            <p className="text-sm font-medium text-muted-foreground">
+                              Mức lương
+                            </p>
+                            <p className="font-semibold text-green-600">
+                              {career.averageSalary}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3 p-4 rounded-lg bg-muted/30">
+                          <Briefcase className="h-8 w-8 text-blue-600" />
+                          <div>
+                            <p className="text-sm font-medium text-muted-foreground">
+                              Nhu cầu
+                            </p>
+                            <p className="font-semibold text-blue-600">
+                              {career.jobDemand}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3 p-4 rounded-lg bg-muted/30">
+                          <TrendingUp className="h-8 w-8 text-purple-600" />
+                          <div>
+                            <p className="text-sm font-medium text-muted-foreground">
+                              Tăng trưởng
+                            </p>
+                            <p className="font-semibold text-purple-600">
+                              +{career.growth}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Pros and Cons */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                          <h4 className="font-semibold text-green-600 mb-3 flex items-center gap-2">
+                            <CheckCircle className="h-5 w-5" />
+                            Điểm mạnh phù hợp
+                          </h4>
+                          <ul className="space-y-2">
+                            {career.pros.map((pro, i) => (
+                              <li
+                                key={i}
+                                className="flex items-center gap-2 text-sm"
+                              >
+                                <div className="w-2 h-2 rounded-full bg-green-500" />
+                                {pro}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div>
+                          <h4 className="font-semibold text-orange-600 mb-3 flex items-center gap-2">
+                            <AlertTriangle className="h-5 w-5" />
+                            Cần cải thiện
+                          </h4>
+                          <ul className="space-y-2">
+                            {career.cons.map((con, i) => (
+                              <li
+                                key={i}
+                                className="flex items-center gap-2 text-sm"
+                              >
+                                <div className="w-2 h-2 rounded-full bg-orange-500" />
+                                {con}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+
+                      <div className="flex gap-3">
+                        <Button className="flex-1">
+                          <BookOpen className="mr-2 h-4 w-4" />
+                          Xem lộ trình học
+                        </Button>
+                        <Button variant="outline" className="flex-1">
+                          <Users className="mr-2 h-4 w-4" />
+                          Tìm mentor
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+          </TabsContent>
+
+          {/* Skills Analysis Tab */}
+          <TabsContent value="skills" className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Technical Skills */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Brain className="h-5 w-5 text-blue-accent" />
+                    Kỹ năng Kỹ thuật
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {analysisResults.skillAnalysis.technical.map(
+                    (skill, index) => (
+                      <div key={index} className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium">{skill.skill}</span>
+                            {getTrendIcon(skill.trend)}
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span
+                              className={`font-semibold ${getScoreColor(skill.score, skill.benchmark)}`}
+                            >
+                              {skill.score}%
+                            </span>
+                            <span className="text-sm text-muted-foreground">
+                              (TB: {skill.benchmark}%)
+                            </span>
+                          </div>
+                        </div>
+                        <Progress value={skill.score} className="h-2" />
+                      </div>
+                    ),
                   )}
                 </CardContent>
               </Card>
-            </motion.div>
-          ))}
-        </motion.div>
 
-        {/* --- */}
-        {/* Interactive Filters */}
-        <motion.div
-          variants={sectionVariants}
-          initial="hidden"
-          animate="visible"
-          className="mb-16"
-        >
-          <Card className="border border-gray-200 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-500">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-3 text-3xl font-bold text-gray-800 mb-2">
-                <Target className="h-8 w-8 text-indigo-600 animate-pulse-slow" />
-                Bộ Lọc Dữ Liệu Tương Tác: Khai Phá Sâu Sắc
-              </CardTitle>
-              <p className="text-gray-600 text-base leading-relaxed">
-                Tùy chỉnh các biểu đồ dưới đây theo <Bold>vai trò, kinh nghiệm</Bold> hoặc <Bold>lĩnh vực chuyên môn</Bold> để tinh chỉnh góc nhìn của bạn, khám phá những điểm độc đáo và đưa ra nhận định chiến lược.
-              </p>
-            </CardHeader>
-            <CardContent>
-              <div className="grid md:grid-cols-3 gap-6">
-                <Select value={roleFilter} onValueChange={setRoleFilter}>
-                  <SelectTrigger className="w-full h-12 text-base border-gray-300 focus:ring-2 focus:ring-blue-400 transition-all duration-300">
-                    <SelectValue placeholder="Lựa chọn Vai trò" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Tất cả Vai trò</SelectItem>
-                    <SelectItem value="frontend">Frontend Developer</SelectItem>
-                    <SelectItem value="backend">Backend Developer</SelectItem>
-                    <SelectItem value="fullstack">Full-stack Developer</SelectItem>
-                    <SelectItem value="mobile">Mobile Developer</SelectItem>
-                    <SelectItem value="devops">DevOps Engineer</SelectItem>
-                  </SelectContent>
-                </Select>
+              {/* Soft Skills */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Users className="h-5 w-5 text-blue-accent" />
+                    Kỹ năng Mềm
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {analysisResults.skillAnalysis.soft.map((skill, index) => (
+                    <div key={index} className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium">{skill.skill}</span>
+                          {getTrendIcon(skill.trend)}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span
+                            className={`font-semibold ${getScoreColor(skill.score, skill.benchmark)}`}
+                          >
+                            {skill.score}%
+                          </span>
+                          <span className="text-sm text-muted-foreground">
+                            (TB: {skill.benchmark}%)
+                          </span>
+                        </div>
+                      </div>
+                      <Progress value={skill.score} className="h-2" />
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+            </div>
 
-                <Select value={experienceFilter} onValueChange={setExperienceFilter}>
-                  <SelectTrigger className="w-full h-12 text-base border-gray-300 focus:ring-2 focus:ring-blue-400 transition-all duration-300">
-                    <SelectValue placeholder="Cấp độ Kinh nghiệm" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Tất cả Cấp độ</SelectItem>
-                    <SelectItem value="fresher">Fresher (0-1 năm)</SelectItem>
-                    <SelectItem value="junior">Junior (1-3 năm)</SelectItem>
-                    <SelectItem value="mid">Mid (3-5 năm)</SelectItem>
-                    <SelectItem value="senior">Senior (5+ năm)</SelectItem>
-                  </SelectContent>
-                </Select>
-
-                <Select value={fieldFilter} onValueChange={setFieldFilter}>
-                  <SelectTrigger className="w-full h-12 text-base border-gray-300 focus:ring-2 focus:ring-blue-400 transition-all duration-300">
-                    <SelectValue placeholder="Lĩnh vực Hoạt động" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Tất cả Lĩnh vực</SelectItem>
-                    <SelectItem value="fintech">Fintech</SelectItem>
-                    <SelectItem value="ecommerce">E-commerce</SelectItem>
-                    <SelectItem value="healthtech">Healthcare Tech</SelectItem>
-                    <SelectItem value="edtech">EdTech</SelectItem>
-                    <SelectItem value="gaming">Gaming</SelectItem>
-                    <SelectItem value="enterprise">Enterprise Software</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        {/* --- */}
-        {/* Main Charts Grid */}
-        <div className="grid lg:grid-cols-2 gap-8 mb-16">
-          {/* Skill Gap Analysis */}
-          <motion.div
-            variants={cardVariants}
-            initial="hidden"
-            animate="visible"
-          >
-            <Card className="h-full border border-gray-200 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-500">
+            {/* Personality Insights */}
+            <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-3 text-2xl font-bold text-gray-800 mb-1">
-                  <AlertTriangle className="h-7 w-7 text-red-500 animate-wiggle-subtle" />
-                  Khoảng Cách Kỹ Năng: Kỳ Vọng & Thực Tế
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Info className="h-5 w-5 text-gray-400 hover:text-gray-600 cursor-pointer ml-auto" />
-                      </TooltipTrigger>
-                      <TooltipContent className="bg-white p-3 border border-gray-200 rounded-lg shadow-xl text-sm max-w-xs z-50">
-                        <p className="font-semibold text-gray-700 mb-1">Diễn giải khoa học:</p>
-                        <p>Biểu đồ này minh họa sự <Bold>chênh lệch chuẩn hóa</Bold> giữa điểm tự đánh giá trung bình của ứng viên (dựa trên năng lực cảm nhận) và điểm đánh giá trung bình từ nhà tuyển dụng (phản ánh kỳ vọng thị trường) cho từng kỹ năng cốt lõi. Khoảng cách dương chỉ ra <Bold>thiếu hụt</Bold>, khoảng cách âm gợi ý <Bold>vượt trội</Bold>.</p>
-                        <p className="mt-2 text-xs text-muted-foreground">Nguồn dữ liệu: <Link href="https://data.thinkshift.vn/skill-gap-analysis" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">thinkshift.vn/data/skill-gap</Link></p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+                <CardTitle className="flex items-center gap-2">
+                  <Star className="h-5 w-5 text-blue-accent" />
+                  Phân tích Tính cách
                 </CardTitle>
-                <p className="text-gray-600 text-base leading-relaxed">
-                  Phân tích điểm trung bình (thang điểm 10) giữa <Bold>tự đánh giá của ứng viên</Bold> và <Bold>yêu cầu thực tế từ nhà tuyển dụng</Bold>, chỉ ra những kỹ năng cần được ưu tiên phát triển.
-                </p>
               </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={380}>
-                  <BarChart data={skillGapData} margin={{ top: 20, right: 30, left: 20, bottom: 80 }}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e0e0e0" />
-                    <XAxis dataKey="skill" angle={-45} textAnchor="end" height={80} fontSize={12} interval={0} tickLine={false} axisLine={false} />
-                    <YAxis domain={[0, 10]} ticks={[0, 2, 4, 6, 8, 10]} stroke="#6b7280" />
-                    <RechartsTooltip
-                      content={<CustomRechartsTooltip />}
-                      formatter={(value: number, name: string) => [`${value.toFixed(1)}/10`, name === "students" ? "Ứng viên" : "Nhà tuyển dụng"]}
-                    />
-                    <Bar dataKey="students" fill="#3b82f6" name="Ứng viên" radius={[6, 6, 0, 0]} barSize={20} />
-                    <Bar dataKey="employers" fill="#10b981" name="Nhà tuyển dụng" radius={[6, 6, 0, 0]} barSize={20} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          {/* Experience Level Radar */}
-          <motion.div
-            variants={cardVariants}
-            initial="hidden"
-            animate="visible"
-          >
-            <Card className="h-full border border-gray-200 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-500">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3 text-2xl font-bold text-gray-800 mb-1">
-                  <Brain className="h-7 w-7 text-purple-600 animate-spin-slow" />
-                  Hồ Sơ Năng Lực Theo Cấp Độ Kinh Nghiệm
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Info className="h-5 w-5 text-gray-400 hover:text-gray-600 cursor-pointer ml-auto" />
-                      </TooltipTrigger>
-                      <TooltipContent className="bg-white p-3 border border-gray-200 rounded-lg shadow-xl text-sm max-w-xs z-50">
-                        <p className="font-semibold text-gray-700 mb-1">Phân tích học thuật:</p>
-                        <p>Biểu đồ radar này trực quan hóa sự <Bold>tiến hóa của năng lực</Bold> (trên thang điểm 10) qua các giai đoạn kinh nghiệm khác nhau. Mỗi "vùng" biểu thị một cấp độ, cho thấy sự gia tăng rõ rệt về kỹ năng Tư duy Hệ thống, Giao tiếp và Học hỏi thích ứng khi kinh nghiệm tích lũy.</p>
-                        <p className="mt-2 text-xs text-muted-foreground">Nguồn dữ liệu: <Link href="https://data.thinkshift.vn/experience-level-competencies" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">thinkshift.vn/data/experience-level</Link></p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </CardTitle>
-                <p className="text-gray-600 text-base leading-relaxed">
-                  Khám phá sự phát triển năng lực cốt lõi (thang điểm 10) của các chuyên gia công nghệ Việt Nam, từ <Bold>Fresher</Bold> đầy tiềm năng đến <Bold>Senior</Bold> giàu kinh nghiệm.
-                </p>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={380}>
-                  <RadarChart
-                    data={[
-                      { skill: "Tư duy Hệ thống", fresher: 4.2, junior: 5.8, mid: 7.1, senior: 8.5 },
-                      { skill: "Giao tiếp Hiệu quả", fresher: 5.1, junior: 6.4, mid: 7.6, senior: 8.2 },
-                      { skill: "Học hỏi & Tự học", fresher: 6.8, junior: 7.2, mid: 7.8, senior: 8.1 },
-                      { skill: "Giải quyết Vấn đề", fresher: 4.5, junior: 6.1, mid: 7.4, senior: 8.3 },
-                      { skill: "Làm việc Nhóm", fresher: 5.8, junior: 6.9, mid: 7.7, senior: 8.4 },
-                    ]}
-                  >
-                    <PolarGrid stroke="#e0e0e0" strokeOpacity={0.7} />
-                    <PolarAngleAxis dataKey="skill" fontSize={13} fill="#4b5563" />
-                    <PolarRadiusAxis domain={[0, 10]} angle={30} tickCount={6} fontSize={11} stroke="#6b7280" />
-                    <Radar name="Fresher" dataKey="fresher" stroke="#ef4444" fill="#ef4444" fillOpacity={0.1} strokeWidth={2} />
-                    <Radar name="Junior" dataKey="junior" stroke="#f97316" fill="#f97316" fillOpacity={0.15} strokeWidth={2} />
-                    <Radar name="Mid" dataKey="mid" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.2} strokeWidth={2} />
-                    <Radar name="Senior" dataKey="senior" stroke="#10b981" fill="#10b981" fillOpacity={0.25} strokeWidth={2} />
-                    <RechartsTooltip content={<CustomRechartsTooltip />} />
-                  </RadarChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-          </motion.div>
-        </div>
-
-        {/* --- */}
-        {/* Secondary Charts */}
-        <div className="grid lg:grid-cols-2 gap-8 mb-16">
-          {/* Industry Comparison */}
-          <motion.div
-            variants={cardVariants}
-            initial="hidden"
-            animate="visible"
-          >
-            <Card className="h-full border border-gray-200 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-500">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3 text-2xl font-bold text-gray-800 mb-1">
-                  <Zap className="h-7 w-7 text-yellow-500 animate-flash" />
-                  So Sánh Năng Lực Theo Lĩnh Vực Công Nghệ
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Info className="h-5 w-5 text-gray-400 hover:text-gray-600 cursor-pointer ml-auto" />
-                      </TooltipTrigger>
-                      <TooltipContent className="bg-white p-3 border border-gray-200 rounded-lg shadow-xl text-sm max-w-xs z-50">
-                        <p className="font-semibold text-gray-700 mb-1">Góc nhìn chuyên sâu:</p>
-                        <p>Biểu đồ cột ngang này cung cấp cái nhìn chi tiết về sự phân bố và cường độ của ba kỹ năng cốt lõi—<Bold>Tư duy Hệ thống, Giao tiếp Hiệu quả và Học hỏi Thích ứng</Bold>—qua các lĩnh vực công nghệ trọng điểm, phản ánh yêu cầu đặc thù của từng ngành.</p>
-                        <p className="mt-2 text-xs text-muted-foreground">Nguồn dữ liệu: <Link href="https://data.thinkshift.vn/industry-comparison" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">thinkshift.vn/data/industry-skills</Link></p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </CardTitle>
-                <p className="text-gray-600 text-base leading-relaxed">
-                  Phân tích điểm trung bình của <Bold>Tư duy Hệ thống, Giao tiếp</Bold> và <Bold>Học hỏi thích ứng</Bold> (thang điểm 10), được bóc tách chi tiết theo từng lĩnh vực chuyên ngành.
-                </p>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={350}>
-                  <BarChart data={filteredIndustryComparisonData} layout="vertical" margin={{ left: 10, right: 30, top: 10, bottom: 10 }}>
-                    <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#e0e0e0" />
-                    <XAxis type="number" domain={[0, 10]} ticks={[0, 2, 4, 6, 8, 10]} stroke="#6b7280" />
-                    <YAxis dataKey="industry" type="category" width={140} fontSize={13} axisLine={false} tickLine={false} fill="#4b5563" />
-                    <RechartsTooltip content={<CustomRechartsTooltip />} formatter={(value: number) => [`${value.toFixed(1)}/10`]} />
-                    <Bar dataKey="systemThinking" fill="#3b82f6" name="Tư duy Hệ thống" barSize={12} radius={[0, 6, 6, 0]} />
-                    <Bar dataKey="communication" fill="#10b981" name="Giao tiếp Hiệu quả" barSize={12} radius={[0, 6, 6, 0]} />
-                    <Bar dataKey="learning" fill="#8b5cf6" name="Học hỏi Thích ứng" barSize={12} radius={[0, 6, 6, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          {/* Role Distribution */}
-          <motion.div
-            variants={cardVariants}
-            initial="hidden"
-            animate="visible"
-          >
-            <Card className="h-full border border-gray-200 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-500">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3 text-2xl font-bold text-gray-800 mb-1">
-                  <Users className="h-7 w-7 text-teal-600 animate-pulse-slow" />
-                  Cấu Trúc Phân Bố Vai Trò Tham Gia
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Info className="h-5 w-5 text-gray-400 hover:text-gray-600 cursor-pointer ml-auto" />
-                      </TooltipTrigger>
-                      <TooltipContent className="bg-white p-3 border border-gray-200 rounded-lg shadow-xl text-sm max-w-xs z-50">
-                        <p className="font-semibold text-gray-700 mb-1">Mô tả định lượng:</p>
-                        <p>Biểu đồ tròn này trình bày <Bold>tỷ lệ phần trăm</Bold> của từng vị trí công việc chính trong tổng số người tham gia khảo sát, phản ánh cấu trúc dân số mẫu của nghiên cứu.</p>
-                        <p className="mt-2 text-xs text-muted-foreground">Nguồn dữ liệu: <Link href="https://data.thinkshift.vn/role-distribution" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">thinkshift.vn/data/roles</Link></p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </CardTitle>
-                <p className="text-gray-600 text-base leading-relaxed">
-                  Tổng quan về tỷ lệ phần trăm các chuyên gia công nghệ tham gia khảo sát, được phân loại theo <Bold>vị trí công việc hiện tại</Bold> của họ.
-                </p>
-              </CardHeader>
-              <CardContent className="flex justify-center items-center h-[350px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={roleDistributionData}
-                      cx="50%"
-                      cy="50%"
-                      outerRadius={120}
-                      fill="#8884d8"
-                      dataKey="value"
-                      label={({ role, percent }) => `${role} (${((percent || 0) * 100).toFixed(0)}%)`}
-                      fontSize={13}
-                      animationDuration={1000}
-                      animationEasing="ease-out"
+              <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {analysisResults.personalityInsights.traits.map(
+                  (trait, index) => (
+                    <div
+                      key={index}
+                      className="p-4 rounded-lg border border-border"
                     >
-                      {roleDistributionData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} stroke={entry.color} strokeWidth={2} />
-                      ))}
-                    </Pie>
-                    <RechartsTooltip content={<CustomRechartsTooltip />} formatter={(value: number, name: string) => [`${value}%`, name]} />
-                  </PieChart>
-                </ResponsiveContainer>
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="font-semibold">{trait.trait}</h4>
+                        <Badge
+                          variant={
+                            trait.score >= 80
+                              ? "default"
+                              : trait.score >= 60
+                                ? "secondary"
+                                : "outline"
+                          }
+                        >
+                          {trait.score}%
+                        </Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        {trait.description}
+                      </p>
+                    </div>
+                  ),
+                )}
               </CardContent>
             </Card>
-          </motion.div>
-        </div>
+          </TabsContent>
 
-        {/* --- */}
-        {/* Trend Analysis */}
+          {/* Learning Roadmap Tab */}
+          <TabsContent value="roadmap" className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Immediate Actions */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Clock className="h-5 w-5 text-red-500" />
+                    Ngay lập tức (0-3 tháng)
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-3">
+                    {analysisResults.learningPath.immediate.map(
+                      (item, index) => (
+                        <li key={index} className="flex items-start gap-2">
+                          <CheckCircle className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" />
+                          <span className="text-sm">{item}</span>
+                        </li>
+                      ),
+                    )}
+                  </ul>
+                </CardContent>
+              </Card>
+
+              {/* Short Term */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Calendar className="h-5 w-5 text-orange-500" />
+                    Ngắn hạn (3-12 tháng)
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-3">
+                    {analysisResults.learningPath.shortTerm.map(
+                      (item, index) => (
+                        <li key={index} className="flex items-start gap-2">
+                          <CheckCircle className="h-5 w-5 text-orange-500 mt-0.5 flex-shrink-0" />
+                          <span className="text-sm">{item}</span>
+                        </li>
+                      ),
+                    )}
+                  </ul>
+                </CardContent>
+              </Card>
+
+              {/* Long Term */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <MapPin className="h-5 w-5 text-green-500" />
+                    Dài hạn (1-2 năm)
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-3">
+                    {analysisResults.learningPath.longTerm.map(
+                      (item, index) => (
+                        <li key={index} className="flex items-start gap-2">
+                          <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+                          <span className="text-sm">{item}</span>
+                        </li>
+                      ),
+                    )}
+                  </ul>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          {/* PDF Export Tab */}
+          <TabsContent value="export" className="space-y-6">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              <PDFExport
+                userProfile={{
+                  name: analysisResults.user.name,
+                  email: "user@example.com",
+                  assessmentDate: analysisResults.user.completedAt,
+                  totalScore: analysisResults.user.totalScore,
+                  level: "Xuất sắc",
+                }}
+                careerRecommendations={analysisResults.careerRecommendations}
+                skillAnalysis={analysisResults.skillAnalysis}
+                learningPath={analysisResults.learningPath}
+              />
+            </motion.div>
+          </TabsContent>
+        </Tabs>
+
+        {/* Action Buttons */}
         <motion.div
-          variants={sectionVariants}
-          initial="hidden"
-          animate="visible"
-          className="mb-16"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="mt-8 flex flex-col sm:flex-row gap-4"
         >
-          <Card className="border border-gray-200 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-500">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-3 text-2xl font-bold text-gray-800 mb-1">
-                <TrendingUp className="h-7 w-7 text-green-600 animate-pulse-fast" />
-                Xu Hướng Phát Triển Năng Lực 6 Tháng Gần Nhất
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Info className="h-5 w-5 text-gray-400 hover:text-gray-600 cursor-pointer ml-auto" />
-                    </TooltipTrigger>
-                    <TooltipContent className="bg-white p-3 border border-gray-200 rounded-lg shadow-xl text-sm max-w-xs z-50">
-                      <p className="font-semibold text-gray-700 mb-1">Phân tích chuỗi thời gian:</p>
-                      <p>Biểu đồ đường này theo dõi sự <Bold>biến động điểm số trung bình</Bold> (thang điểm 10) của các kỹ năng cốt lõi qua từng tháng. Xu hướng này có thể chỉ ra hiệu quả của các chương trình đào tạo, sự dịch chuyển nhu cầu thị trường, hoặc nỗ lực tự thân của cộng đồng.</p>
-                      <p className="mt-2 text-xs text-muted-foreground">Nguồn dữ liệu: <Link href="https://data.thinkshift.vn/skill-trends" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">thinkshift.vn/data/trends</Link></p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </CardTitle>
-              <p className="text-gray-600 text-base leading-relaxed">
-                Đồ thị thể hiện sự <Bold>cải thiện liên tục</Bold> về điểm số trung bình (thang điểm 10) của các kỹ năng cốt lõi qua từng tháng, phản ánh động thái phát triển năng lực chung của cộng đồng chuyên gia công nghệ.
-              </p>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={350}>
-                <LineChart data={trendData} margin={{ top: 10, right: 30, left: 20, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e0e0e0" />
-                  <XAxis dataKey="month" fontSize={13} stroke="#6b7280" />
-                  <YAxis domain={[6, 8.5]} ticks={[6, 6.5, 7, 7.5, 8, 8.5]} stroke="#6b7280" />
-                  <RechartsTooltip content={<CustomRechartsTooltip />} />
-                  <Line type="monotone" dataKey="systemThinking" stroke="#3b82f6" strokeWidth={4} name="Tư duy Hệ thống" dot={{ r: 6, fill: '#3b82f6', stroke: '#fff', strokeWidth: 2 }} activeDot={{ r: 8, fill: '#3b82f6', stroke: '#fff', strokeWidth: 3 }}/>
-                  <Line type="monotone" dataKey="communication" stroke="#10b981" strokeWidth={4} name="Giao tiếp Hiệu quả" dot={{ r: 6, fill: '#10b981', stroke: '#fff', strokeWidth: 2 }} activeDot={{ r: 8, fill: '#10b981', stroke: '#fff', strokeWidth: 3 }} />
-                  <Line type="monotone" dataKey="learning" stroke="#8b5cf6" strokeWidth={4} name="Học hỏi & Tự học" dot={{ r: 6, fill: '#8b5cf6', stroke: '#fff', strokeWidth: 2 }} activeDot={{ r: 8, fill: '#8b5cf6', stroke: '#fff', strokeWidth: 3 }} />
-                </LineChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        {/* --- */}
-        {/* Key Insights */}
-        <motion.div
-          variants={sectionVariants}
-          initial="hidden"
-          animate="visible"
-          className="mb-16"
-        >
-          <Card className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-500">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-3 text-3xl font-bold text-gray-800 mb-2">
-                <Lightbulb className="h-8 w-8 text-yellow-500 animate-flicker" />
-                Những Phát Hiện Khoa Học & Nhận Định Chiến Lược
-              </CardTitle>
-              <p className="text-gray-600 text-base leading-relaxed">
-                Tổng hợp các điểm nhấn quan trọng từ dữ liệu, cung cấp <Bold>cái nhìn sâu sắc</Bold> và <Bold>định hướng chiến lược</Bold> về thực trạng năng lực, giúp cá nhân và tổ chức đưa ra quyết định sáng suốt.
-              </p>
-            </CardHeader>
-            <CardContent>
-              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <div className="space-y-3 p-6 bg-white rounded-xl shadow-md border border-gray-100 hover:shadow-lg transition-shadow duration-300 transform hover:-translate-y-0.5">
-                  <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center shadow-md">
-                    <AlertTriangle className="h-8 w-8 text-red-600" />
-                  </div>
-                  <h4 className="font-bold text-xl text-gray-900">🎯 Khoảng Cách Kỹ Năng Lớn Nhất</h4>
-                  <p className="text-sm text-gray-600 leading-relaxed">
-                    Nghiên cứu cho thấy, kỹ năng <Bold>Giải quyết Vấn đề</Bold> (Problem Solving) đang có khoảng cách lớn nhất, với chênh lệch <Bold>3.0 điểm</Bold> giữa kỳ vọng của nhà tuyển dụng và năng lực tự đánh giá của ứng viên. Đây là điểm nhấn cần ưu tiên cải thiện.
-                  </p>
-                </div>
-
-                <div className="space-y-3 p-6 bg-white rounded-xl shadow-md border border-gray-100 hover:shadow-lg transition-shadow duration-300 transform hover:-translate-y-0.5">
-                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center shadow-md">
-                    <Brain className="h-8 w-8 text-blue-600" />
-                  </div>
-                  <h4 className="font-bold text-xl text-gray-900">📚 Nghịch Lý Kỹ Năng Kỹ Thuật & Mềm</h4>
-                  <p className="text-sm text-gray-600 leading-relaxed">
-                    Mặc dù ứng viên tự tin vào <Bold>Kỹ năng Kỹ thuật</Bold> và <Bold>Kiến thức Chuyên môn</Bold> của mình, nhưng các nhà tuyển dụng lại đặc biệt nhấn mạnh tầm quan trọng thiết yếu của <Bold>Kỹ năng Mềm</Bold> (Soft Skills) như tư duy phản biện và giao tiếp trong bối cảnh công việc hiện đại.
-                  </p>
-                </div>
-
-                <div className="space-y-3 p-6 bg-white rounded-xl shadow-md border border-gray-100 hover:shadow-lg transition-shadow duration-300 transform hover:-translate-y-0.5">
-                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center shadow-md">
-                    <TrendingUp className="h-8 w-8 text-green-600" />
-                  </div>
-                  <h4 className="font-bold text-xl text-gray-900">📈 Xu Hướng Phát Triển Vững Chắc</h4>
-                  <p className="text-sm text-gray-600 leading-relaxed">
-                    Dữ liệu cho thấy <Bold>sự cải thiện đồng đều</Bold> về điểm số trung bình của các kỹ năng cốt lõi trong 6 tháng đầu năm 2024, đặc biệt là <Bold>Học hỏi & Tự học</Bold>, phản ánh nỗ lực không ngừng và khả năng thích ứng cao của cộng đồng công nghệ Việt Nam.
-                  </p>
-                </div>
-
-                <div className="space-y-3 p-6 bg-white rounded-xl shadow-md border border-gray-100 hover:shadow-lg transition-shadow duration-300 transform hover:-translate-y-0.5">
-                  <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center shadow-md">
-                    <Lightbulb className="h-8 w-8 text-purple-600" />
-                  </div>
-                  <h4 className="font-bold text-xl text-gray-900">💡 Cơ Hội Đào Tạo Trọng Tâm</h4>
-                  <p className="text-sm text-gray-600 leading-relaxed">
-                    Kết quả phân tích chỉ ra rằng các chương trình đào tạo tập trung vào <Bold>Tư duy Hệ thống</Bold> và <Bold>Giải quyết Vấn đề</Bold> cho các cấp độ <Bold>Fresher và Junior</Bold> sẽ mang lại hiệu quả cao, giúp thu hẹp nhanh chóng khoảng cách năng lực.
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        {/* --- */}
-        {/* Call to Action */}
-        <motion.div
-          variants={sectionVariants}
-          initial="hidden"
-          animate="visible"
-          className="text-center mt-16"
-        >
-          <h2 className="font-bold text-3xl md:text-4xl text-gray-800 mb-6 leading-tight">
-            Bạn đã sẵn sàng nâng tầm năng lực của mình?
-          </h2>
-          <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto mb-8">
-            Hãy khám phá các chương trình đào tạo chuyên sâu và công cụ đánh giá cá nhân của Thinkshift để không ngừng phát triển và đáp ứng mọi kỳ vọng của thị trường.
-          </p>
-          <Button asChild size="lg" className="
-  px-6 py-3
-  text-lg
-  rounded-full shadow-lg
-  bg-gradient-to-r from-blue-500 to-purple-600
-  hover:from-blue-600 hover:to-purple-700
-  transition-all duration-300 transform hover:scale-105
-  sm:px-8
-  sm:text-lg
-">
-  <Link href="assessment">
-    {/* Short text for mobile, full text for larger screens */}
-    <span className="inline sm:hidden">Đánh Giá Ngay</span> {/* Visible on small screens only */}
-    <span className="hidden sm:inline">Bắt Đầu Đánh Giá Năng Lực Ngay</span> {/* Visible from 'sm' breakpoint up */}
-    <ArrowRight className="ml-3 h-5 w-5" />
-  </Link>
-</Button>
+          <Button size="lg" className="flex-1" asChild>
+            <Link href="/dashboard">
+              <Target className="mr-2 h-5 w-5" />
+              Về Dashboard
+            </Link>
+          </Button>
+          <Button size="lg" variant="outline" className="flex-1" asChild>
+            <Link href="/assessment">
+              <Brain className="mr-2 h-5 w-5" />
+              Làm lại đánh giá
+            </Link>
+          </Button>
+          <Button size="lg" variant="outline" className="flex-1" asChild>
+            <Link href="/mentoring">
+              <Users className="mr-2 h-5 w-5" />
+              Tìm mentor
+            </Link>
+          </Button>
         </motion.div>
       </div>
     </div>
   );
-};
-
-// =====================================================================================
-// <<<<< CUSTOM CSS CHO HIỆU ỨNG VÀ HOẠT ẢNH (Có thể thêm vào globals.css hoặc một file CSS riêng) >>>>>
-// =====================================================================================
-/*
-Bạn có thể thêm các đoạn CSS dưới đây vào file `globals.css` (hoặc một file CSS tương ứng trong dự án Next.js của bạn)
-để các hiệu ứng hoạt ảnh tùy chỉnh được áp dụng.
-
-@keyframes pulse-slow {
-  0%, 100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.05);
-    opacity: 0.8;
-  }
 }
-
-@keyframes spin-slow {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes flicker {
-  0%, 18%, 22%, 25%, 53%, 57%, 100% {
-    opacity: 1;
-  }
-  20%, 24%, 55% {
-    opacity: 0.6;
-  }
-}
-
-@keyframes flash {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.4;
-  }
-}
-
-@keyframes wiggle-subtle {
-  0%, 100% {
-    transform: rotate(0deg);
-  }
-  25% {
-    transform: rotate(-1deg);
-  }
-  75% {
-    transform: rotate(1deg);
-  }
-}
-
-@keyframes bounce-subtle {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-2px);
-  }
-}
-
-.animate-pulse-slow {
-  animation: pulse-slow 2.5s infinite ease-in-out;
-}
-
-.animate-spin-slow {
-  animation: spin-slow 10s linear infinite;
-}
-
-.animate-flicker {
-  animation: flicker 3s infinite steps(5, end);
-}
-
-.animate-flash {
-  animation: flash 1.5s infinite alternate;
-}
-
-.animate-wiggle-subtle {
-  animation: wiggle-subtle 1.5s infinite ease-in-out;
-}
-
-.animate-bounce-subtle {
-  animation: bounce-subtle 1.5s infinite ease-in-out;
-}
-
-.animate-fade-in {
-  animation: fadeIn 0.3s ease-out forwards;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(5px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-*/

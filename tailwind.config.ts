@@ -1,4 +1,4 @@
-import type { Config } from "tailwindcss"
+import type { Config } from "tailwindcss";
 
 const config: Config = {
   darkMode: ["class"],
@@ -25,7 +25,7 @@ const config: Config = {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "hsl(217.2 91.2% 59.8%)",
+          DEFAULT: "hsl(var(--primary))" /* #0A3D62 - xanh navy */,
           foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {
@@ -52,6 +52,12 @@ const config: Config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+
+        /* ThinkShift Vietnam Custom Colors */
+        navy: "hsl(var(--navy))" /* #0A3D62 */,
+        "blue-accent": "hsl(var(--blue-accent))" /* #1B9CFC */,
+        "text-dark": "hsl(var(--text-dark))" /* #222831 */,
+        "gray-light": "hsl(var(--gray-light))" /* #F9F9F9 */,
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -75,6 +81,6 @@ const config: Config = {
     },
   },
   plugins: [require("tailwindcss-animate")],
-} satisfies Config
+} satisfies Config;
 
-export default config
+export default config;

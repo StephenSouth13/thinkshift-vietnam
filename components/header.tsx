@@ -1,51 +1,57 @@
-"use client"
+"use client";
 
-import { useState, useEffect, MouseEvent } from "react"
-import Link from "next/link"
-import Image from "next/image"
-import { usePathname } from "next/navigation"
-import { Button } from "@/components/ui/button"
+import { useState, useEffect, MouseEvent } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { usePathname } from "next/navigation";
+import { Button } from "@/components/ui/button";
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet"
-import { Menu, ArrowRight } from "lucide-react"
-import { motion } from "framer-motion"
-import { cn } from "@/lib/utils"
-import { ThemeToggle } from "@/components/theme-toggle"
+} from "@/components/ui/sheet";
+import { Menu, ArrowRight } from "lucide-react";
+import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export function Header() {
-  const [isScrolled, setIsScrolled] = useState(false)
-  const [hoveredItem, setHoveredItem] = useState<string | null>(null)
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
-  const pathname = usePathname()
+  const pathname = usePathname();
 
   useEffect(() => {
-    const checkScroll = () => setIsScrolled(window.scrollY > 10)
-    checkScroll()
-    window.addEventListener("scroll", checkScroll, { passive: true })
-    return () => window.removeEventListener("scroll", checkScroll)
-  }, [])
+    const checkScroll = () => setIsScrolled(window.scrollY > 10);
+    checkScroll();
+    window.addEventListener("scroll", checkScroll, { passive: true });
+    return () => window.removeEventListener("scroll", checkScroll);
+  }, []);
 
   const handleMouseMove = (event: MouseEvent<HTMLElement>) => {
-    const rect = event.currentTarget.getBoundingClientRect()
-    setMousePosition({ x: event.clientX - rect.left, y: event.clientY - rect.top })
-  }
+    const rect = event.currentTarget.getBoundingClientRect();
+    setMousePosition({
+      x: event.clientX - rect.left,
+      y: event.clientY - rect.top,
+    });
+  };
 
   const navItems = [
     { href: "/", label: "Trang chủ" },
-    { href: "/about", label: "Giới thiệu" },
+    { href: "/dashboard", label: "Dashboard" },
+    { href: "/assessment", label: "Đánh giá" },
     { href: "/blog", label: "Blog" },
-    { href: "/results", label: "Báo cáo" },
-    { href: "/contact", label: "Liên Hệ" },
-  ]
+    { href: "/co-learning", label: "Co-Learning" },
+    { href: "/mentoring", label: "Mentoring" },
+  ];
 
-  const textColorClass = isScrolled ? "text-foreground" : "text-white"
-  const textMutedColorClass = isScrolled ? "text-foreground/70" : "text-white/80"
+  const textColorClass = isScrolled ? "text-foreground" : "text-white";
+  const textMutedColorClass = isScrolled
+    ? "text-foreground/70"
+    : "text-white/80";
 
   return (
     <motion.header
@@ -53,7 +59,7 @@ export function Header() {
         "fixed top-0 w-full z-50 transition-all duration-500 ease-in-out group/header transition-colors",
         isScrolled
           ? "shadow-lg bg-white/80 dark:bg-gradient-to-br dark:from-slate-900 dark:via-slate-950 dark:to-black backdrop-blur-xl"
-          : "bg-transparent"
+          : "bg-transparent",
       )}
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
@@ -74,20 +80,22 @@ export function Header() {
             whileHover={{ scale: 1.05, rotate: -3 }}
             transition={{ type: "spring", stiffness: 200, damping: 10 }}
           >
-            <Image
-              src="/logo/image.png"
-              alt="ThinkShift Vietnam Logo"
-              width={56}
-              height={56}
-              className="rounded-lg transition-all duration-300 drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]"
-            />
+            <div className="w-14 h-14 bg-gradient-to-br from-navy to-blue-accent rounded-lg flex items-center justify-center shadow-lg">
+              <span className="text-white font-bold text-xl">TS</span>
+            </div>
           </motion.div>
-          <span className="font-bold text-2xl hidden sm:inline-block">
-            <span className={cn("transition-colors duration-300", textColorClass)}>
-              Think
+          <div className="hidden sm:flex flex-col">
+            <span className="font-bold text-xl leading-none">
+              <span
+                className={cn("transition-colors duration-300", textColorClass)}
+              >
+                ThinkShift
+              </span>
             </span>
-            <span className="text-cyan-400">Shift</span>
-          </span>
+            <span className="text-sm text-blue-accent font-medium">
+              Vietnam
+            </span>
+          </div>
         </Link>
 
         {/* Desktop Navigation */}
@@ -97,7 +105,7 @@ export function Header() {
             onMouseLeave={() => setHoveredItem(null)}
           >
             {navItems.map((item) => {
-              const isActive = pathname === item.href
+              const isActive = pathname === item.href;
               return (
                 <Link
                   key={item.href}
@@ -105,21 +113,27 @@ export function Header() {
                   className={cn(
                     "relative px-3 py-1.5 transition-colors duration-300 z-10",
                     isActive ? textColorClass : textMutedColorClass,
-                    !isActive && hoveredItem === item.href ? textColorClass : ""
+                    !isActive && hoveredItem === item.href
+                      ? textColorClass
+                      : "",
                   )}
                   onMouseEnter={() => setHoveredItem(item.href)}
                 >
                   {item.label}
                   {(isActive || hoveredItem === item.href) && (
                     <motion.div
-                      className="absolute inset-0 rounded-full bg-cyan-400/10 dark:bg-cyan-300/10"
+                      className="absolute inset-0 rounded-full bg-blue-accent/10 dark:bg-blue-accent/20"
                       layoutId="hover-capsule"
-                      transition={{ type: "spring", stiffness: 150, damping: 20 }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 150,
+                        damping: 20,
+                      }}
                       style={{ zIndex: -1 }}
                     />
                   )}
                 </Link>
-              )
+              );
             })}
           </div>
 
@@ -131,7 +145,7 @@ export function Header() {
               asChild
               className={cn(
                 !isScrolled &&
-                  "bg-cyan-400/10 border-cyan-300/20 text-white hover:bg-cyan-400/20"
+                  "bg-blue-accent/10 border-blue-accent/20 text-white hover:bg-blue-accent/20",
               )}
             >
               <Link href="/login">Đăng nhập</Link>
@@ -150,8 +164,12 @@ export function Header() {
           <ThemeToggle />
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="hover:bg-accent/10">
-                <Menu className="h-6 w-6 text-cyan-400" />
+              <Button
+                variant="ghost"
+                size="icon"
+                className="hover:bg-accent/10"
+              >
+                <Menu className="h-6 w-6 text-blue-accent" />
               </Button>
             </SheetTrigger>
             <SheetContent
@@ -166,8 +184,8 @@ export function Header() {
                     className={cn(
                       "px-3 py-2 rounded-md transition-colors duration-200",
                       pathname === item.href
-                        ? "text-cyan-400 font-semibold bg-cyan-400/10"
-                        : "text-muted-foreground hover:text-foreground hover:bg-muted/10"
+                        ? "text-blue-accent font-semibold bg-blue-accent/10"
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted/10",
                     )}
                   >
                     {item.label}
@@ -192,13 +210,13 @@ export function Header() {
 
         <div
           className={cn(
-            "absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-400",
+            "absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-navy via-blue-accent to-navy",
             "transition-opacity duration-500",
-            isScrolled ? "opacity-[.85] dark:opacity-90" : "opacity-0"
+            isScrolled ? "opacity-[.85] dark:opacity-90" : "opacity-0",
           )}
           aria-hidden="true"
         />
       </div>
     </motion.header>
-  )
+  );
 }
