@@ -80,7 +80,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="vi" suppressHydrationWarning>
-      <body className={inter.className}>
+      <body className={inter?.className || ""}>
+
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <Header />
           <main className="min-h-screen">{children}</main>
