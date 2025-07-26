@@ -59,7 +59,7 @@ export default function ContactPage() {
                           LinkedIn
                         </Button>
                         <Button size="sm" variant="outline">
-                          <Github className="h-4 w-4 mr-2" />
+                          <Github className="h-4   w-4 mr-2" />
                           GitHub
                         </Button>
                       </div>
@@ -68,39 +68,8 @@ export default function ContactPage() {
                 </CardContent>
               </Card>
 
-              {/* Founder 2 */}
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex flex-col md:flex-row gap-6">
-                    <div className="w-32 h-32 bg-muted rounded-lg flex items-center justify-center flex-shrink-0">
-                      <img
-                        src="/Thuan.png"
-                        alt="Trịnh Nam Thuận"
-                        className="w-full h-full object-cover rounded-lg"
-                      />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-xl mb-2">Trịnh Nam Thuận</h3>
-                      <p className="text-primary font-medium mb-3">Co-Founder & Business Strategy</p>
-                      <p className="text-muted-foreground mb-4">
-                        Thuận có background mạnh về kinh doanh và phát triển sản phẩm. Với kinh nghiệm tư vấn cho nhiều
-                        doanh nghiệp về chuyển đổi số, anh hiểu rõ nhu cầu thực tế của thị trường lao động và xu hướng
-                        phát triển của các ngành nghề trong tương lai.
-                      </p>
-                      <div className="flex space-x-3">
-                        <Button size="sm" variant="outline">
-                          <Linkedin className="h-4 w-4 mr-2" />
-                          LinkedIn
-                        </Button>
-                        <Button size="sm" variant="outline">
-                          <Mail className="h-4 w-4 mr-2" />
-                          Email
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+         
+              
             </div>
 
             {/* Mission Statement */}
