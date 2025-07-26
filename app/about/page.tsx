@@ -125,7 +125,7 @@ export default function AboutPage() {
 
             <div className="bg-neutral-950/50 border border-neutral-800 p-8 md:p-12 rounded-2xl shadow-lg">
               <p className="text-xl leading-relaxed text-neutral-300 mb-8 text-center">
-                Những sinh viên công nghệ với bằng cấp ưu tú nhưng mơ hồ về năng lực lõi. Những nhà tuyển dụng mệt mỏi vì không tìm được ứng viên có khả năng "giải quyết vấn đề thực".
+                Những sinh viên ngành công nghệ thông tin mới ra trường với bằng cấp ưu tú nhưng mơ hồ về năng lực lõi. Những nhà tuyển dụng mệt mỏi vì không tìm được ứng viên có khả năng "giải quyết vấn đề thực".
               </p>
               <div className="grid md:grid-cols-2 gap-8 my-8">
                 <div className="bg-neutral-800/50 p-6 rounded-lg border border-neutral-700/80 flex items-start gap-4 hover:border-cyan-400/50 hover:bg-neutral-800">

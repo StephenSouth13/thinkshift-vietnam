@@ -55,7 +55,7 @@ const responses: Record<Intent, string[]> = {
   ],
 
   ASK_TEAM: [
-    "Dự án được đồng sáng lập bởi:\n- Quách Thành Long (Tech & System Architect): Người kiến tạo nền tảng công nghệ, kết hợp tư duy Kỹ thuật và Kinh doanh.\n- Trịnh Nam Thuận (Data & Research Lead): Người chịu trách nhiệm về phân tích dữ liệu và thiết kế khảo sát.",
+    "Dự án được đồng sáng lập bởi:\n- Quách Thành Long (Tech & System Architect): Người kiến tạo nền tảng công nghệ, kết hợp tư duy Kỹ thuật và Kinh doanh.\n- Quách Thành Long (Data & Research Lead): Người chịu trách nhiệm về phân tích dữ liệu và thiết kế khảo sát.",
   ],
 
   ASK_TECH_STACK: [

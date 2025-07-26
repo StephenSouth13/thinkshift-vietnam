@@ -66,7 +66,7 @@ export const blogPosts: Post[] = [
   id: 2,
   title: "Tư duy Phản biện: Kỹ năng sinh tồn trong thế kỷ 21",
   excerpt: "Trong một thế giới tràn ngập thông tin, khả năng tư duy phản biện không còn là lợi thế – mà là điều kiện sống còn để làm chủ tri thức và chính mình.",
-  author: "Trịnh Nam Thuận",
+  author: "Quách Thành Long",
   date: "2024-01-10",
   category: "Soft Skills",
   image: "/post/post_2.png",
@@ -199,7 +199,7 @@ export const blogPosts: Post[] = [
   title: "Học một kỹ năng mới hiệu quả trong 30 ngày",
   excerpt:
     "Phương pháp học siêu tốc nhưng không 'mì ăn liền': Làm thế nào để não bộ bạn vừa thích nghi, vừa tiếp thu nhanh chóng một kỹ năng mới chỉ trong vòng một tháng?",
-  author: "Trịnh Nam Thuận",
+  author: "Quách Thành Long",
   date: "2023-12-28",
   category: "Learning",
   image: "/post/post_4.png",
@@ -294,7 +294,7 @@ export const blogPosts: Post[] = [
   title: "Xây Dựng Personal Brand Trong Thời Đại Số: Khi Mỗi Con Người Là Một Thương Hiệu Sống",
   excerpt:
     "Bạn không cần là hot TikToker để có thương hiệu cá nhân. Nhưng nếu bạn muốn sống sót – và phát triển – trong một thị trường cạnh tranh không khoan nhượng, personal brand là điều bạn KHÔNG THỂ không có.",
-  author: "Trịnh Nam Thuận",
+  author: "Quách Thành Long",
   date: "2023-12-15",
   category: "Personal Branding",
   image: "/post/post_6.png",

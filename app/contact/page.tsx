@@ -49,7 +49,7 @@ export default function ContactPage() {
                       <h3 className="font-semibold text-xl mb-2">Quách Thành Long</h3>
                       <p className="text-primary font-medium mb-3">Co-Founder & Lead Developer</p>
                       <p className="text-muted-foreground mb-4">
-                        Với hơn 8 năm kinh nghiệm trong phát triển phần mềm và quản lý sản phẩm, Long mang đến góc nhìn
+                        Với hơn 2 năm kinh nghiệm trong phát triển phần mềm và quản lý sản phẩm, Long mang đến góc nhìn
                         thực tế về thị trường công nghệ Việt Nam. Anh đã từng làm việc tại các startup và tập đoàn lớn,
                         hiểu rõ khoảng cách giữa đào tạo và thực tế công việc.
                       </p>
