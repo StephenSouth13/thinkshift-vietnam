@@ -43,12 +43,12 @@ export const PROBLEM_RESPONSES = [
 
 // --- DỮ LIỆU VỀ ĐỘI NGŨ SÁNG LẬP ---
 export const FOUNDER_KEYWORDS = [
-  "ai sáng lập", "founder", "đội ngũ", "người đứng đầu", "thành long", "nam thuận"
+  "ai sáng lập", "founder", "đội ngũ", "người đứng đầu", "thành long", 
 ];
 
 export const FOUNDER_RESPONSES = [
-  "ThinkShift được đồng sáng lập bởi hai thành viên: Anh Quách Thành Long (Tech & System Architect) và Anh Trịnh Nam Thuận (Data & Research Lead). Cả hai đều có chung trăn trở về 'lỗi hệ thống' trong giáo dục và tuyển dụng hiện nay. 👨‍💻👨‍🔬",
-  "Người đứng sau ThinkShift là anh Quách Thành Long, một kiến trúc sư hệ thống, và anh Trịnh Nam Thuận, một nhà phân tích kinh doanh. Sự kết hợp giữa Công nghệ và Kinh doanh chính là điểm đặc biệt của chúng tôi! ✨"
+  "ThinkShift được đồng sáng lập bởi Quách Thành Long. Long đều có chung trăn trở về 'lỗi hệ thống' trong giáo dục và tuyển dụng hiện nay. 👨‍💻👨‍🔬",
+  "Người đứng sau ThinkShift là Quách Thành Long, một kiến trúc sư hệ thống- một nhà phân tích kinh doanh. Sự kết hợp giữa Công nghệ và Kinh doanh chính là điểm đặc biệt của ThinkShift! ✨"
 ];
 
 // --- DỮ LIỆU VỀ GIÁ TRỊ CỐT LÕI ---

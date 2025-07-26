@@ -7,8 +7,8 @@ import { Github, Linkedin, Facebook, ArrowUp } from "lucide-react"
 
 // Mảng chứa thông tin mạng xã hội để dễ quản lý
 const socialLinks = [
-  { name: "GitHub", href: "https://github.com/StephenSouth13", icon: Github }, // Thay # bằng link GitHub của bạn
-  { name: "LinkedIn", href: "https://www.linkedin.com/in/quach-long-338018274/", icon: Linkedin }, // Thay # bằng link LinkedIn của bạn
+  { name: "GitHub", href: "https://github.com/StephenSouth13", icon: Github }, 
+  { name: "LinkedIn", href: "https://www.linkedin.com/in/quach-long-338018274/", icon: Linkedin },
   { name: "Facebook", href: "https://www.facebook.com/long.quach.273823", icon: Facebook },
 ]
 

@@ -60,7 +60,7 @@ npm run dev
 Truy cập tại: http://localhost:3000
 
 👥 Nhà Phát triển
-Quách Thành Long – Co-founder | Tech & System Architect
+Quách Thành Long – Founder 
 
 Kiến tạo toàn bộ nền tảng công nghệ, kết hợp nền tảng IT (VTC Academy) và Kinh doanh (UEH).
 
