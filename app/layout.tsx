@@ -5,7 +5,7 @@ import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
-import ClientWrapper from "@/components/ClientWrapper" // ✅ thêm dòng này
+import ClientWrapper from "@/components/ClientWrapper" // Import component for FloatingAI
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     "Giá trị không thể thay thế",
     "Công nghệ",
     "Công nghệ AI",
-    "Tương lai",    
+    "Tương lai",     
     "Tương lai công việc",
     "Tương lai nghề nghiệp",
     "Tương lai AI",
@@ -86,9 +86,10 @@ export default function RootLayout({
           <Header />
           <main className="min-h-screen">{children}</main>
           <Footer />
-          <ClientWrapper /> {/* ✅ render FloatingAI đúng cách */}
+          <ClientWrapper /> {/* render FloatingAI  */}
         </ThemeProvider>
       </body>
     </html>
   )
 }
+
